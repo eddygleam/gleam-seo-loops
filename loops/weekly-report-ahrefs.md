@@ -177,13 +177,29 @@ Next week's diff depends on this; skip it and every week looks like week one.
 
 ## Step 7 — deliver
 
-**Slack canvas** — create a canvas titled `SEO — <ISO week>` containing: six headline numbers
-with week-on-week change; top three movers up and down with value change; the priority actions
-each with its `where`; brand position summary.
+The **full report is the rendered HTML** — `templates/weekly-report.html` filled with this
+run's data via `gleam_seo.render_html`, all twelve sections including the section 02 diverging
+value chart. A Slack **canvas is markdown and cannot render that HTML or its chart**, so the
+canvas is an at-a-glance summary only; the HTML file is the actual deliverable. Deliver in this
+order:
 
-**Slack direct message to Eddy** — send him a DM, not a channel post. One short message: the
-single most important finding, the count of priority items, and a link to the canvas. Three
-lines maximum.
+1. **HTML report → Google Drive.** Write the rendered `report.html` to the Drive folder
+   `Gleam SEO reports` (create it if absent), named `SEO-<ISO week>.html`, and get a shareable
+   link. This is the required 12-section format. The Slack connector has **no file-upload
+   tool**, so Drive is where the openable report lives — do not try to attach the HTML to a
+   Slack message, it will not work. *(Optional: to also post it as a native Slack file like the
+   team's older `gleam-*.html` reports, use a Zapier Slack "upload file" action into `#seo`.)*
+
+2. **Slack `#seo` channel — channel ID `C08F23HCDQA`, NOT a personal DM.** Create the summary
+   canvas titled `SEO — <ISO week>` in that channel (six headline numbers with WoW change; top
+   three movers up and down with value change; priority actions each with its `where`; brand
+   position summary), then post one short message in `#seo` linking both the canvas and the
+   Drive HTML report. The Slack connector is authenticated **as Eddy**, so anything not
+   explicitly posted to `#seo` lands in his personal space — post the report to the channel.
+
+3. **DM heads-up to Eddy** — one message, three lines max: the single most important finding,
+   the count of priority items, and the link to the Drive HTML report. This is a personal
+   ping, not the report itself; the report lives in `#seo` + Drive.
 
 **Linear** — one issue per priority-1 and priority-2 action, team Marketing, title
 `[SEO] <rule> — <keyword or page>`, the `where` as the first line of the description.
