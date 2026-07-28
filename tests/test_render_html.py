@@ -1,9 +1,7 @@
-import json
 import os
-import re
 import unittest
 
-from gleam_seo.render_html import PLACEHOLDER, render
+from gleam_seo.render_html import END, START, render
 
 TEMPLATE_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
@@ -18,50 +16,53 @@ def _template():
 
 
 class TestTemplateStructure(unittest.TestCase):
-    def test_template_has_exactly_twelve_sections(self):
-        template = _template()
-        self.assertEqual(template.count('data-section="'), 12)
+    def test_template_has_twelve_numbered_sections(self):
+        self.assertEqual(_template().count('class="snum"'), 12)
 
-    def test_template_has_all_expected_section_ids(self):
-        template = _template()
-        for name in ["headline", "value-chart", "movers-up", "movers-down",
-                     "priority-actions", "brand-paid", "conquest", "cannibalisation",
-                     "ctr-gaps", "informational", "ga4-organic-revenue", "referral-revenue"]:
-            self.assertIn('data-section="%s"' % name, template)
+    def test_template_has_both_markers_in_order(self):
+        t = _template()
+        self.assertIn(START, t)
+        self.assertIn(END, t)
+        self.assertLess(t.find(START), t.find(END))
 
-    def test_template_has_data_placeholder(self):
-        self.assertIn(PLACEHOLDER, _template())
+    def test_template_keeps_the_fixed_renderer(self):
+        # The signature diverging strip and the render section must survive.
+        t = _template()
+        self.assertIn("SIGNATURE: diverging value-delta strip", t)
+        self.assertIn("================= RENDER =================", t)
 
 
 class TestRender(unittest.TestCase):
-    def test_injects_findings_and_consumes_placeholder(self):
-        out = render({"generated_for": "2026-07-28", "counts": {"findings": 3}}, _template())
-        self.assertNotIn(PLACEHOLDER, out)
-        self.assertIn('"generated_for"', out)
+    def test_injects_report_and_replaces_sample(self):
+        out = render({"week": "2099-W01", "period": "test"}, _template())
+        self.assertIn('const REPORT = {"week": "2099-W01"', out)
+        # the sample data ("live draw" etc.) must be gone
+        self.assertNotIn("live draw", out)
 
-    def test_injected_json_is_recoverable(self):
-        findings = {"headline": {"organic_clicks": {"this_week": 529}}, "value_chart": []}
-        out = render(findings, _template())
-        m = re.search(r'<script id="report-data" type="application/json">(.*?)</script>',
-                      out, re.DOTALL)
-        self.assertIsNotNone(m)
-        recovered = json.loads(m.group(1))
-        self.assertEqual(recovered["headline"]["organic_clicks"]["this_week"], 529)
+    def test_markers_survive_for_reinjection(self):
+        out = render({"week": "x"}, _template())
+        self.assertIn(START, out)
+        self.assertIn(END, out)
 
-    def test_script_closing_tag_in_data_is_escaped(self):
-        findings = {"note": "danger </script><script>alert(1)</script>"}
-        out = render(findings, _template())
-        # The injected data must not contain a raw </script> that would close
-        # the block early; it is escaped to <\/script>.
-        m = re.search(r'<script id="report-data" type="application/json">(.*?)</script>',
-                      out, re.DOTALL)
-        self.assertIsNotNone(m)
-        self.assertNotIn("</script>", m.group(1))
-        self.assertIn("<\\/script>", m.group(1))
+    def test_between_markers_is_only_our_object(self):
+        out = render({"week": "x"}, _template())
+        between = out.split(START, 1)[1].split(END, 1)[0]
+        self.assertIn("const REPORT =", between)
+        self.assertNotIn("diverge:", between)  # sample object is gone
 
-    def test_missing_placeholder_raises(self):
+    def test_script_closing_tag_escaped(self):
+        out = render({"note": "x </script><script>bad</script>"}, _template())
+        between = out.split(START, 1)[1].split(END, 1)[0]
+        self.assertNotIn("</script>", between)
+        self.assertIn("<\\/script>", between)
+
+    def test_missing_marker_raises(self):
         with self.assertRaises(ValueError):
-            render({"a": 1}, "<html>no placeholder here</html>")
+            render({"a": 1}, "<html>no markers</html>")
+
+    def test_markers_out_of_order_raises(self):
+        with self.assertRaises(ValueError):
+            render({"a": 1}, END + " ... " + START)
 
 
 if __name__ == "__main__":

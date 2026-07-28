@@ -105,39 +105,52 @@ the snapshot's `keyword_metrics` block, keyed by the (normalised) query:
 The driver only ever reads volume and CPC from here; **position always comes from the GSC
 rows**, never from Ahrefs' organic position (they disagree, and GSC wins).
 
-## Step 3 — run the driver, then render
+## Step 3 — assemble the snapshot, run the driver, render
+
+The report is `templates/weekly-report.html` — a fixed template carrying one `REPORT` object
+between `/* @@REPORT_DATA_START@@ */` and `/* @@REPORT_DATA_END@@ */`, and a fixed JS renderer
+below it. The loop replaces only that object each run; **never touch the renderer**.
 
 ```bash
-python -m gleam_seo.report      --input snapshot.json  --output findings.json
-python -m gleam_seo.render_html --findings findings.json --output report.html
+python -m gleam_seo.report      --input snapshot.json --output report.json
+python -m gleam_seo.render_html --report report.json  --output report.html
 ```
 
-`findings.json` contains all twelve sections' data. `report.html` is the self‑contained report
-built from `templates/weekly-report.html` — **all 12 sections, same diverging value chart**.
-Do not hand‑edit either to shorten the report; the template always emits every section, with an
-empty/"not pulled" state where there is nothing to show.
+`build_report` splits the twelve sections into two:
 
-The twelve sections: (1) headline numbers, (2) movers by estimated value change — the diverging
-chart, (3) top movers up, (4) top movers down, (5) priority actions, (6) brand paid, (7)
-conquest, (8) cannibalisation, (9) CTR gaps, (10) informational queue, (11) organic revenue by
-landing page (GA4), (12) referral revenue. Sections 11 and 12 read "not pulled this run" in this
-variant.
+- **Computed by the tested code — do not hand‑write these.** `diverge` (the signature value strip),
+  `gained` / `lost` (with cannibalisation vs ranking diagnosis), `cannib`, `ctrgap`, the `info`
+  rows, the brand KPI trio (rank‑lost share, CPA vs conquest, ROAS — from the manual block), the
+  seeded `queue`, `status`, `week` / `period`, `findings` / `priority1`.
+- **Authored by you, passed in `narrative`.** The prose and other‑source sections the diff can't
+  produce: the scorecard `kpis` + `kpisrc`, `sov`, `displace`, `newpages`, `ai`, the per‑keyword
+  brand `paid` table + `serp` + `attack` + `note` + `datagap`, `rev`, `ref`, per‑page `info`
+  verdicts, `method`, and `units`. Put them under `"narrative": { ... }` in the snapshot; the
+  driver merges them over safe defaults, so anything you omit renders empty or "not pulled this
+  run" rather than breaking the template.
+
+The twelve sections (template order): 01 scorecard, 02 what moved (diverging strip), 03 movers
+(gained/lost), 04 flags (cannibalisation + CTR gaps), 05 revenue, 06 referral revenue, 07 brand,
+08 competition, 09 AI search, 10 action queue, 11 informational, 12 method. **In this variant,
+05 revenue and 06 referral revenue have no GA4 source, so leave their `narrative` out and they
+read "not pulled this run".** Never delete a section to shorten the report.
 
 ## Step 4 — snapshot to Drive
 
 Write the run's raw pulls to Google Drive as JSON in folder `Gleam SEO snapshots`, named
 `YYYY-MM-DD-<kind>.json` for kinds `gsc_keywords`, `gsc_pages`, `ctr_by_position`,
-`keyword_metrics`, `manual`, and the computed `findings`. Also write `report.html`. Next week's
-run reads the prior `gsc_keywords` snapshot as `prior_week` instead of a second live pull.
+`keyword_metrics`, `manual`, and the computed `report` (the REPORT object). Also write
+`report.html`. Next week's run reads the prior `gsc_keywords` snapshot as `prior_week` instead of
+a second live pull.
 
 ## Step 5 — output
 
-**Slack** — create a canvas in `#seo` titled `SEO — <ISO week>` reproducing **all twelve
-sections** from `findings.json` (headline six numbers with WoW; the value‑change movers; top
-three up/down; priority actions each with its `where`; brand paid with the rank‑lost reading;
-conquest; cannibalisation; CTR gaps; informational queue; and the two GA4 sections shown as
-"not pulled this run"). Attach or link `report.html`. Then post a short message linking the
-canvas: headline finding, count of priority items, nothing else.
+**Slack** — create a canvas in `#seo` titled `SEO — <ISO week>` reproducing the sections from
+`report.json` (the scorecard; the value‑change movers; gained/lost; the flags — cannibalisation
+and CTR gaps; the action queue each item with its `where`; and the brand rank‑lost reading).
+Attach or link `report.html`. Then post a short message linking the canvas: headline finding,
+count of priority items, nothing else. The GA4 revenue and referral sections show "not pulled
+this run" in this variant — say so rather than omitting them.
 
 **Linear** — one issue per priority action, team Marketing, title `[SEO] <rule> — <keyword or
 page>`, first description line is the `where`. Do not duplicate open issues; comment instead.

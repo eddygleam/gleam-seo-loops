@@ -80,7 +80,8 @@ Pull:
 Assemble the pulls into one snapshot JSON and hand it to the driver:
 
 ```bash
-python -m gleam_seo.report --input snapshot.json --output findings.json
+python -m gleam_seo.report      --input snapshot.json --output report.json
+python -m gleam_seo.render_html --report report.json  --output report.html
 ```
 
 Input shape (all sections optional except `gsc_keywords`):
@@ -88,29 +89,31 @@ Input shape (all sections optional except `gsc_keywords`):
 ```json
 {
   "today": "2026-07-28",
-  "gsc_keywords":    {"this_week": [{"query","clicks","impressions","position","ctr?"}], "prior_week": [...]},
+  "meta":  {"units": {"ahrefs": 0, "semrush": 2260}},
+  "gsc_keywords":    {"this_week": [{"query","clicks","impressions","position","top_url?"}], "prior_week": [...]},
   "gsc_query_pages": {"this_week": [{"query","page","clicks","impressions"}], "prior_week": [...]},
-  "semrush":         {"<normalised query>": {"volume": 5000, "cpc": 11.0}},
+  "ctr_by_position": [{"position": 1, "average_ctr_percent": 31.2}, ...],
+  "keyword_metrics": {"<normalised query>": {"volume": 5000, "cpc": 11.0, "cluster": "Tool"}},
   "paid":            {"keyword_view": [{"keyword","cost_micros","clicks","impressions","conversions"}],
-                      "rank_lost": 0.452, "budget_lost": 0.033}
+                      "rank_lost": 0.452, "budget_lost": 0.033, "roas": 0.92, "conquest_cpa": 244.35},
+  "narrative":       { ... }
 }
 ```
 
-`findings.json` gives you all twelve report sections: `headline` (week-on-week clicks /
-impressions / avg position / organic revenue / brand spend / ROAS), the derived `ctr_curve`,
-the `value_chart` data, ranked `movers` / `movers_up` / `movers_down` (each with track,
-position change, value change and the human-readable `reasons` it cleared threshold),
-`priority_actions` (each already carrying a `where`), `brand_paid` with its
-`lost_share_reading`, `conquest`, `cannibalisation`, `ctr_gaps`, `informational`, the two GA4
-revenue sections, and `counts`. The driver already applies every threshold in the table below,
-ranks by estimated value change (`volume × CTR at position × CPC`, CTR curve derived from this
-week's own data), and drops excluded intent — so read the movers straight out; do not
-re-filter or re-rank.
+`report.json` is the `REPORT` object the template renders — the same object described in the
+Ahrefs variant (`loops/weekly-report-ahrefs.md`, Step 3). The driver **computes** the diff-derived
+sections (`diverge`, `gained`, `lost`, `cannib`, `ctrgap`, the `info` rows, the brand KPI trio,
+`status`, `queue`, `week`/`period`, `findings`/`priority1`) — read them straight out, do not
+re-filter or re-rank — and **merges** the prose/other-source sections you author under
+`narrative` (scorecard `kpis`, `sov`, `ai`, per-keyword brand `paid`, `rev`, `ref`, `method`, …).
+With the full connector set you can populate `rev` and `ref` from GA4 rather than leaving them
+"not pulled". The driver ranks by estimated value change (`volume × CTR at position × CPC`, curve
+from this week's own data) and drops excluded intent.
 
-Then render the self-contained HTML report (all twelve sections + the diverging value chart):
+Then render the self-contained HTML report (all twelve sections + the diverging value strip):
 
 ```bash
-python -m gleam_seo.render_html --findings findings.json --output report.html
+python -m gleam_seo.render_html --report report.json --output report.html
 ```
 
 For reference, the thresholds it enforces (`gleam_seo/thresholds.py`):

@@ -28,8 +28,10 @@ loops/
                                 684395); Google Ads + GA4 come from a six-field manual block.
   weekly-report-v1-standalone.md  The original no-repo prompt, kept for reference / fallback.
 templates/
-  weekly-report.html            The canonical report: all twelve sections + the diverging
-                                value chart, self-contained (no external assets).
+  weekly-report.html            The canonical report: twelve numbered sections + the diverging
+                                value strip, self-contained. Carries one REPORT object between
+                                @@REPORT_DATA_START@@ / @@REPORT_DATA_END@@ and a fixed JS
+                                renderer; the loop overwrites only that object each run.
 gleam_seo/
   classify.py    Track classification: brand / commercial / informational / other / excluded (Rule 2).
   dates.py       GSC week ranges (7 days ending yesterday) and the GAQL BETWEEN clause.
@@ -38,8 +40,8 @@ gleam_seo/
   diagnostics.py Cannibalisation (top ranking page moved) and CTR-gap detection.
   paid.py        Google Ads micros → currency, keyword folding, aggregation, rank- vs budget-lost reading.
   thresholds.py  Every movement / materiality / scope threshold, in one auditable place.
-  report.py      Driver: snapshot JSON in → computed findings JSON out (`python -m gleam_seo.report`).
-  render_html.py Inject findings into templates/weekly-report.html (`python -m gleam_seo.render_html`).
+  report.py      Driver: snapshot JSON in → REPORT object out (`python -m gleam_seo.report`).
+  render_html.py Inject the REPORT object between the template markers (`python -m gleam_seo.render_html`).
 tests/           unittest-based tests for every module (also run under pytest).
 ```
 

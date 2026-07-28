@@ -1,324 +1,811 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-GB">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Gleam.io weekly SEO report</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gleam.io — Weekly SEO Report</title>
 <style>
-  :root {
-    --bg: #ffffff; --fg: #14181f; --muted: #6b7480; --line: #e4e8ee;
-    --card: #f7f9fc; --accent: #7c3aed; --gain: #16a34a; --loss: #dc2626;
-    --pill: #eef1f6; --pillfg: #4b5563;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0f1319; --fg: #e6e9ef; --muted: #97a0ad; --line: #232a34;
-      --card: #161c24; --accent: #a78bfa; --gain: #4ade80; --loss: #f87171;
-      --pill: #202833; --pillfg: #aab3c0;
-    }
-  }
-  * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--fg);
-    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-  .wrap { max-width: 940px; margin: 0 auto; padding: 32px 20px 80px; }
-  header.report { border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 8px; }
-  header.report h1 { font-size: 22px; margin: 0 0 4px; }
-  header.report .meta { color: var(--muted); font-size: 13px; }
-  section { border-top: 1px solid var(--line); padding: 22px 0; }
-  section:first-of-type { border-top: none; }
-  section > h2 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 14px; }
-  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  @media (max-width: 640px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
-  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
-  .kpi .label { font-size: 12px; color: var(--muted); }
-  .kpi .value { font-size: 22px; font-weight: 650; margin-top: 4px; }
-  .kpi .delta { font-size: 12px; margin-top: 2px; }
-  .up { color: var(--gain); } .down { color: var(--loss); }
-  .pill { display: inline-block; background: var(--pill); color: var(--pillfg);
-    border-radius: 999px; padding: 1px 9px; font-size: 12px; }
-  .np { font-style: italic; color: var(--muted); }
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
-  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .scroll { overflow-x: auto; }
-  ol.actions { margin: 0; padding-left: 20px; } ol.actions li { margin-bottom: 12px; }
-  ol.actions .where { color: var(--muted); font-size: 13px; }
-  ol.actions .rule { display: inline-block; background: var(--pill); color: var(--pillfg);
-    border-radius: 6px; padding: 0 7px; font-size: 11px; margin-right: 6px; text-transform: uppercase; letter-spacing: .04em; }
-  .empty { color: var(--muted); font-style: italic; }
-  /* diverging value chart */
-  .chart-row { display: grid; grid-template-columns: 200px 1fr; align-items: center; gap: 10px; margin: 3px 0; font-size: 13px; }
-  .chart-row .name { text-align: right; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .track-brand { border-left: 3px solid var(--accent); }
-  footer.report { margin-top: 40px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+:root{--bg:#f6f8f9;--panel:#fff;--ink:#0f1720;--ink-2:#3d4855;--ink-3:#6b7684;--line:#e3e8ec;--line-2:#cdd5db;--green:#33B679;--green-d:#1f7d52;--green-bg:#e8f6ef;--red:#d64545;--red-bg:#fbecec;--amber:#c98a1a;--amber-bg:#fbf3e2;--blue:#2f6fb0;--blue-bg:#e9f1fa;--purple:#6b53b8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink-2);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6}
+.wrap{max-width:1140px;margin:0 auto;padding:0 30px}
+h1,h2,h3,h4{color:var(--ink);line-height:1.22;letter-spacing:-.01em}
+.mono{font-family:'IBM Plex Mono',monospace}
+a{color:var(--green-d)}
+:focus-visible{outline:2px solid var(--green-d);outline-offset:2px}
+header{padding:44px 0 22px;border-bottom:2px solid var(--ink)}
+.ey{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--green-d);margin-bottom:12px}
+header h1{font-size:31px;max-width:24ch}
+.meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:16px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-3)}
+section{padding:30px 0;border-bottom:1px solid var(--line)}
+.snum{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--green-d);letter-spacing:.15em}
+h2{font-size:23px;margin:6px 0 6px}h3{font-size:16px;margin:20px 0 8px}
+p{margin-bottom:11px;max-width:86ch}
+ul{margin:0 0 12px 22px}li{margin-bottom:6px;max-width:84ch}
+.callout{background:var(--green-bg);border:1px solid #bfe6d2;border-radius:10px;padding:15px 18px;margin:14px 0}
+.callout.amber{background:var(--amber-bg);border-color:#ead9b0}
+.callout.red{background:var(--red-bg);border-color:#eecccc}
+.callout.quiet{background:#eef2f4;border-color:var(--line-2)}
+.b{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:5px}
+.b.g{background:var(--green-bg);color:var(--green-d)}
+.b.r{background:var(--red-bg);color:var(--red)}
+.b.a{background:var(--amber-bg);color:var(--amber)}
+.b.bl{background:var(--blue-bg);color:var(--blue)}
+.b.p{background:#efe9fb;color:var(--purple)}
+.b.n{background:#eef2f4;color:var(--ink-2)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px}
+.kpi .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-3);font-family:'IBM Plex Mono',monospace}
+.kpi .v{font-size:26px;font-weight:800;color:var(--ink);margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:11.5px;margin-top:4px;font-family:'IBM Plex Mono',monospace}
+.up{color:var(--green-d);font-weight:600}.dn{color:var(--red);font-weight:600}.flat{color:var(--ink-3)}
+table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--panel);margin:8px 0}
+th{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);padding:9px 8px;border-bottom:2px solid var(--line-2);white-space:nowrap}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:#f0f4f6}
+.src{font-size:11px;color:var(--ink-3);font-style:italic;margin-top:6px}
+
+/* SIGNATURE: diverging value-delta strip */
+.dv{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:14px 0}
+.dv-row{display:grid;grid-template-columns:210px 1fr 92px;gap:14px;align-items:center;padding:3px 0;font-size:12.5px}
+.dv-kw{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dv-kw i{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-3);font-style:normal;margin-left:6px}
+.dv-track{position:relative;height:20px;background:linear-gradient(90deg,transparent 49.7%,var(--line-2) 49.7%,var(--line-2) 50.3%,transparent 50.3%)}
+.dv-bar{position:absolute;top:3px;height:14px;border-radius:2px}
+.dv-bar.pos{left:50%;background:var(--green)}
+.dv-bar.neg{right:50%;background:var(--red)}
+.dv-bar.info{opacity:.42}
+.dv-val{text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600;font-variant-numeric:tabular-nums}
+.dv-axis{display:grid;grid-template-columns:210px 1fr 92px;gap:14px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+.dv-axis span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.dv-axis .mid{display:flex;justify-content:space-between}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:11px;color:var(--ink-3)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+.q{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--line-2);border-radius:8px;padding:14px 16px;margin:10px 0}
+.q.p1{border-left-color:var(--red)}.q.p2{border-left-color:var(--amber)}.q.p3{border-left-color:var(--blue)}
+.q h4{font-size:14px;margin-bottom:5px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.q ul{margin:6px 0 0 20px;font-size:13px}
+.q .why{font-size:12px;color:var(--ink-3);margin-top:6px}
+.sov{display:grid;grid-template-columns:150px 1fr 116px;gap:10px;align-items:center;padding:4px 0;font-size:12.5px}
+.sov .t{height:17px;background:#eef2f4;border-radius:3px;overflow:hidden}
+.sov .t>i{display:block;height:100%}
+.sov b{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;text-align:right}
+.tt{display:flex;gap:8px;align-items:baseline;margin:24px 0 4px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+.tt h3{margin:0;font-size:17px}
+footer{padding:26px 0;color:var(--ink-3);font-size:12px}
+@media(max-width:820px){.kpis{grid-template-columns:repeat(2,1fr)}.dv-row,.dv-axis{grid-template-columns:120px 1fr 76px;gap:8px}.sov{grid-template-columns:100px 1fr 90px}}
+@media print{body{background:#fff}section{break-inside:avoid}.dv,.q,.kpi{break-inside:avoid}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="report">
-    <h1>Gleam.io — weekly SEO report</h1>
-    <div class="meta" id="report-meta"></div>
-  </header>
 
-  <!-- All twelve sections are present in the markup regardless of data; the
-       script fills each body, or renders an empty / "not pulled this run"
-       state. Do not remove a section to produce a shorter report. -->
-  <section data-section="headline"><h2>1 · Headline numbers</h2><div class="kpis" id="s-headline"></div></section>
-  <section data-section="value-chart"><h2>2 · Movers by estimated value change</h2><div id="s-value-chart"></div></section>
-  <section data-section="movers-up"><h2>3 · Top movers up</h2><div class="scroll" id="s-movers-up"></div></section>
-  <section data-section="movers-down"><h2>4 · Top movers down</h2><div class="scroll" id="s-movers-down"></div></section>
-  <section data-section="priority-actions"><h2>5 · Priority actions</h2><div id="s-priority-actions"></div></section>
-  <section data-section="brand-paid"><h2>6 · Brand paid (Google Ads)</h2><div id="s-brand-paid"></div></section>
-  <section data-section="conquest"><h2>7 · Conquest / competitors campaign</h2><div id="s-conquest"></div></section>
-  <section data-section="cannibalisation"><h2>8 · Cannibalisation</h2><div class="scroll" id="s-cannibalisation"></div></section>
-  <section data-section="ctr-gaps"><h2>9 · CTR gaps</h2><div class="scroll" id="s-ctr-gaps"></div></section>
-  <section data-section="informational"><h2>10 · Informational queue</h2><div class="scroll" id="s-informational"></div></section>
-  <section data-section="ga4-organic-revenue"><h2>11 · Organic revenue by landing page (GA4)</h2><div id="s-ga4-organic-revenue"></div></section>
-  <section data-section="referral-revenue"><h2>12 · Referral revenue</h2><div id="s-referral-revenue"></div></section>
+<header>
+  <div class="ey" id="eyebrow"></div>
+  <h1 id="headline"></h1>
+  <div class="meta" id="runmeta"></div>
+</header>
 
-  <footer class="report" id="report-footer"></footer>
+<!-- STATUS -->
+<section>
+  <div id="status"></div>
+</section>
+
+<!-- 01 SCORECARD -->
+<section>
+  <div class="snum">01 · SCORECARD</div>
+  <h2>Commercial performance</h2>
+  <div class="kpis" id="kpis"></div>
+  <p class="src" id="kpisrc"></p>
+</section>
+
+<!-- 02 SIGNATURE: value movement -->
+<section>
+  <div class="snum">02 · WHAT MOVED</div>
+  <h2>Change in estimated traffic value, this week</h2>
+  <p>Ranked by money, not position. A keyword going #47 → #29 looks dramatic and is worth nothing; a top-3 term slipping two places on an A$11 CPC is worth a great deal. Solid bars are commercial, faded bars informational.</p>
+  <div class="dv" id="diverge"></div>
+</section>
+
+<!-- 03 MOVERS -->
+<section>
+  <div class="snum">03 · MOVERS</div>
+  <h2>Commercial gains and losses, with diagnosis</h2>
+
+  <h3>Gained</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Keyword</th><th class="l">Cluster</th><th>Was</th><th>Now</th><th>Vol</th><th>CPC</th><th>Δ value</th><th class="l">Ranking URL</th>
+  </tr></thead><tbody id="gained"></tbody></table></div>
+
+  <h3>Lost</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Keyword</th><th class="l">Cluster</th><th>Was</th><th>Now</th><th>Vol</th><th>CPC</th><th>Δ value</th><th class="l">Diagnosis</th><th class="l">Fix at</th>
+  </tr></thead><tbody id="lost"></tbody></table></div>
+  <p class="src">Diagnosis is derived, not guessed: a changed ranking URL means cannibalisation rather than a ranking loss; a changed SERP composition means the fix is not on-page.</p>
+</section>
+
+<!-- 04 FLAGS -->
+<section>
+  <div class="snum">04 · FLAGS</div>
+  <h2>Problems ranking data hides</h2>
+
+  <h3>Cannibalisation — two Gleam URLs competing</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Keyword</th><th>CPC</th><th class="l">URL A</th><th class="l">URL B</th><th>Flips (4wk)</th><th class="l">Keep</th><th class="l">Recommended action</th>
+  </tr></thead><tbody id="cannib"></tbody></table></div>
+
+  <div class="callout amber">
+    <b>How to de-cannibalise — in this order.</b> Skipping step 4 is why cannibalisation comes back.
+    <ol style="margin:8px 0 0 20px">
+      <li><b>Pick the winner on evidence, not preference.</b> Count ranking keywords in the cluster, referring domains, and conversion rate per session. Highest of the three wins. Never pick on which page you prefer or which is newer.</li>
+      <li><b>Choose redirect or differentiate.</b> If the losing page has no independent job → 301 to the winner. If it genuinely serves different intent (a template someone lands on from inside the app) → keep it and retarget it. Canonical tags are the wrong tool here: Google treats them as a hint and the flipping often continues.</li>
+      <li><b>Strip the competing signal.</b> On the losing page, remove the target keyword from title, H1 and first paragraph. Give it a modifier the winner is not chasing.</li>
+      <li><b>Repoint every internal link.</b> Any internal anchor using the target keyword must point at the winner. This is the step that actually resolves it — the rest is housekeeping.</li>
+      <li><b>Update the sitemap</b> and remove the redirected URL.</li>
+      <li><b>Re-submit the winner</b> via <code class="mono">gsc:inspect_url_enhanced</code> so the change is picked up in days rather than weeks.</li>
+      <li><b>Watch four weeks.</b> One URL should hold consistently. Continued flipping means the two pages are still too similar — go back to step 3.</li>
+    </ol>
+  </div>
+
+  <p><span class="b n">Site health 91</span> <span class="dn">−1 WoW</span> — below the alert threshold of 88 triggers a technical item; it has not.</p>
+
+  <h3>CTR below position benchmark — metadata problem</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Keyword</th><th>Pos</th><th>Impr</th><th>Actual CTR</th><th>Expected</th><th>Gap</th><th class="l">Page</th>
+  </tr></thead><tbody id="ctrgap"></tbody></table></div>
+  <p class="src">Expected CTR is Gleam's own 90-day average at that position, from Search Console — not an industry table. A keyword at #3 pulling well under benchmark is a title problem the ranking never reveals.</p>
+</section>
+
+<!-- 05 REVENUE -->
+<section>
+  <div class="snum">05 · REVENUE</div>
+  <h2>Top organic revenue pages, with the query earning it</h2>
+  <div class="kpis" id="revkpis"></div>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Landing page</th><th>Revenue</th><th>Sessions</th><th>Rev/session</th>
+    <th class="l">Primary query</th><th>Pos</th><th>Clicks</th><th class="l">Read</th>
+  </tr></thead><tbody id="revtable"></tbody></table></div>
+  <div class="callout" id="revnote"></div>
+  <p class="src">GA4 does not expose a keyword for organic sessions. The join is landing page → that page's highest-click query in Search Console for the same period, so "primary query" is the query most likely earning the revenue, not a measured attribution. Treat rev/session as sound and query attribution as indicative.</p>
+</section>
+
+<!-- 06 REFERRALS -->
+<section>
+  <div class="snum">06 · REFERRAL REVENUE</div>
+  <h2>Which backlinks earn money, and what anchor text they use</h2>
+  <div class="kpis" id="refkpis"></div>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Referring domain</th><th class="l">Dominant anchor</th><th class="l">Anchor type</th>
+    <th>Sessions</th><th>Revenue</th><th>Rev/session</th><th>DR</th><th>Links</th><th class="l">Linking page</th>
+  </tr></thead><tbody id="reftable"></tbody></table></div>
+  <div class="callout" id="refnote"></div>
+  <p class="src">Joined on referring domain: GA4 sessionSourceMedium gives sessions and revenue, Ahrefs site-explorer-anchors gives the anchor text. Where a domain links more than once with different anchors, the dominant anchor by link count is shown — revenue cannot be split to individual links, so read this at domain level.</p>
+</section>
+
+<!-- 07 BRAND -->
+<section>
+  <div class="snum">07 · BRAND</div>
+  <h2>Branded search — ownership, attackers and revenue</h2>
+  <div class="kpis" id="brkpis"></div>
+  <div class="callout red" id="brnote"></div>
+
+  <h3>Brand paid performance — 90 days, from the account</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Brand keyword</th><th>Spend</th><th>Clicks</th><th>Conv</th><th>CPA</th><th>ROAS</th>
+    <th>Impr share</th><th class="l">Verdict</th><th class="l">Fix at</th>
+  </tr></thead><tbody id="brpaid"></tbody></table></div>
+  <p class="src" id="brpaidsrc"></p>
+
+  <h3>Who owns the "gleam alternative" SERP — organic</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th>Pos</th><th class="l">Domain</th><th class="l">URL</th><th class="l">Page type</th><th class="l">Threat</th>
+  </tr></thead><tbody id="brserp"></tbody></table></div>
+
+  <h3>Who bids on brand-modifier terms — 12 months</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Advertiser</th><th class="l">Category</th><th>Best ad position</th><th class="l">Last seen</th><th class="l">Reads as</th>
+  </tr></thead><tbody id="brattack"></tbody></table></div>
+
+  <div class="callout amber" id="brdata"></div>
+</section>
+
+<!-- 08 COMPETITORS -->
+<section>
+  <div class="snum">08 · COMPETITION</div>
+  <h2>Share of voice on the commercial keyword set</h2>
+  <div id="sov"></div>
+  <h3>Direct displacement — they gained the same week we lost</h3>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Keyword</th><th class="l">Competitor</th><th>Their move</th><th>Our move</th><th>CPC</th><th class="l">Response</th><th class="l">Build at</th>
+  </tr></thead><tbody id="displace"></tbody></table></div>
+  <h3>New competitor pages entering our SERPs</h3>
+  <ul id="newpages"></ul>
+</section>
+
+<!-- 09 AI SEARCH -->
+<section>
+  <div class="snum">09 · AI SEARCH</div>
+  <h2>AI Overview presence and citation share</h2>
+  <div class="kpis" id="aikpis"></div>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Commercial keyword</th><th class="l">AI Overview</th><th class="l">Gleam cited</th><th class="l">Who is cited</th><th class="l">Action</th><th class="l">Implement at</th>
+  </tr></thead><tbody id="aitable"></tbody></table></div>
+</section>
+
+<!-- 10 ACTION QUEUE -->
+<section>
+  <div class="snum">10 · WHERE TO MAKE CHANGES</div>
+  <h2>Action queue</h2>
+  <p>Every item below was produced by a rule in <code class="mono">report-config.json</code>, not by judgement. Priority 1 and 2 items are opened as Linear issues automatically and de-duplicated on title.</p>
+  <div id="queue"></div>
+</section>
+
+<!-- 11 INFORMATIONAL -->
+<section>
+  <div class="snum">11 · INFORMATIONAL TRACK</div>
+  <h2>Guides, how-tos and ideas</h2>
+  <p>Measured on impressions and citation share, never on traffic value — otherwise a guide's 4,000 impressions drowns out a top-3 commercial term moving one place.</p>
+  <div class="kpis" id="infokpis"></div>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Page</th><th>Impr Δ 3wk</th><th>Clicks Δ</th><th>Weeks declining</th><th class="l">Verdict</th>
+  </tr></thead><tbody id="infotable"></tbody></table></div>
+  <div class="callout amber" id="infopaid"></div>
+</section>
+
+<!-- 12 METHOD -->
+<section>
+  <div class="snum">12 · METHOD &amp; RUN LOG</div>
+  <ul id="method"></ul>
+</section>
+
+<footer id="foot"></footer>
 </div>
 
-<script id="report-data" type="application/json">
-/*__REPORT_DATA__*/
-</script>
 <script>
-(function () {
-  var NP = "not pulled this run";
-  var data;
-  try { data = JSON.parse(document.getElementById("report-data").textContent); }
-  catch (e) { data = {}; }
+/* ============================================================
+   REPORT DATA — the loop overwrites this whole object each run.
+   Everything below the object is pure rendering; leave it alone.
+   Sample values shown are grounded in Gleam's real keyword set.
+   ============================================================ */
+/* @@REPORT_DATA_START@@ */
+const REPORT = {
+  week: "2026-W31",
+  period: "21–27 July 2026",
+  generated: "28 Jul 2026 09:03 AEST",
+  findings: 11,
+  priority1: 3,
+  units: { ahrefs: 1840, semrush: 2260 },
 
-  function isNP(v) { return v === NP || v === null || v === undefined; }
-  function np() { var s = document.createElement("span"); s.className = "np"; s.textContent = NP; return s; }
-  function fmt(v, opts) {
-    opts = opts || {};
-    if (isNP(v)) return NP;
-    if (typeof v !== "number") return String(v);
-    if (opts.pct) return (v * 100).toFixed(1) + "%";
-    if (opts.money) return (opts.cur || "$") + v.toLocaleString(undefined, {maximumFractionDigits: 2});
-    if (opts.pos) return v.toFixed(1);
-    return v.toLocaleString(undefined, {maximumFractionDigits: opts.dp == null ? 0 : opts.dp});
-  }
-  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
-  function emptyMsg(host, msg) { var d = el("div", "empty", msg); host.appendChild(d); }
+  status: {
+    level: "action",           // "action" | "quiet"
+    line: "Three priority-1 items. The largest single loss this week is <b>live draw</b> — #8 → #11 on an A$11.24 CPC term, worth about A$412/mo in estimated traffic value.",
+    quiet_line: "No commercial movement past threshold. 3 informational refreshes queued."
+  },
 
-  // meta + footer
-  var wr = data.week_ranges || {};
-  var tw = wr.this_week ? (wr.this_week[0] + " → " + wr.this_week[1]) : (data.generated_for || "");
-  document.getElementById("report-meta").textContent =
-    "This week " + tw + (wr.prior_week ? "  ·  prior " + wr.prior_week[0] + " → " + wr.prior_week[1] : "");
-  var c = data.counts || {};
-  document.getElementById("report-footer").textContent =
-    "run completed, " + (c.queries_checked || 0) + " queries checked, " + (c.findings || 0) + " findings"
-    + "  ·  CTR curve: " + (data.ctr_curve_source || "n/a")
-    + "  ·  organic value figures are indicative USD (Ahrefs), brand paid figures are A$.";
+  kpis: [
+    { k:"Commercial visibility", v:"34.2%", d:"+0.8 WoW · +2.1 4wk", dir:"up",
+      note:"Position Tracking, commercial tag only" },
+    { k:"Commercial traffic value", v:"A$41.3k", d:"−A$1,180 WoW · +A$2,940 4wk", dir:"dn",
+      note:"Organic Research traffic cost" },
+    { k:"Paid offset available", v:"A$312/mo", d:"7 terms now ranking #1–3", dir:"flat",
+      note:"Spend on terms organic already owns" },
+    { k:"Non-brand commercial clicks", v:"8,431", d:"+3.1% WoW", dir:"up",
+      note:"Brand excluded — the growable number" },
+    { k:"Striking distance (4–15)", v:"23", d:"+2 WoW", dir:"up",
+      note:"Commercial only" },
+    { k:"Organic revenue (GA4)", v:"A$18.4k", d:"+2.8% WoW · last-click", dir:"up",
+      note:"Actual money, not modelled value" }
+  ],
+  kpisrc: "Commercial set = 1,368 tool/software/platform terms + 795 action terms + directory + brand-product, per config. Brand split out of every aggregate: 'gleam' alone carries 14,800 monthly volume and would otherwise swamp the trend.",
 
-  // 1 · headline
-  (function () {
-    var host = document.getElementById("s-headline");
-    var H = data.headline || {};
-    var defs = [
-      ["Organic clicks", H.organic_clicks, {}],
-      ["Organic impressions", H.organic_impressions, {}],
-      ["Avg position", H.avg_position, {pos: true, invert: true}],
-      ["Organic revenue", H.organic_revenue, {money: true}],
-      ["Brand paid spend", H.brand_paid_spend, {money: true, cur: "A$"}],
-      ["Brand ROAS", H.brand_roas, {dp: 2}]
-    ];
-    defs.forEach(function (d) {
-      var card = el("div", "kpi");
-      card.appendChild(el("div", "label", d[0]));
-      var wow = d[1];
-      var val = el("div", "value");
-      if (wow && typeof wow === "object" && "this_week" in wow) {
-        val.textContent = isNP(wow.this_week) ? NP : fmt(wow.this_week, d[2]);
-        if (isNP(wow.this_week)) val.className = "value np";
-        card.appendChild(val);
-        if (!isNP(wow.change)) {
-          var better = d[2].invert ? wow.change < 0 : wow.change > 0;
-          var delta = el("div", "delta " + (wow.change === 0 ? "" : (better ? "up" : "down")));
-          delta.textContent = (wow.change > 0 ? "+" : "") + fmt(wow.change, d[2]) + " WoW";
-          card.appendChild(delta);
-        }
-      } else {
-        if (isNP(wow)) { val.className = "value np"; val.textContent = NP; }
-        else val.textContent = fmt(wow, d[2]);
-        card.appendChild(val);
-      }
-      host.appendChild(card);
-    });
-  })();
+  /* Δ estimated monthly traffic value, AUD. Sorted by absolute value by the renderer. */
+  diverge: [
+    { kw:"live draw",                 pos:"8→11",  d:-412, track:"commercial" },
+    { kw:"instagram giveaway picker",  pos:"6→4",   d:+168, track:"commercial" },
+    { kw:"contest software",           pos:"4→6",   d:-196, track:"commercial" },
+    { kw:"instagram comment picker",   pos:"9→11",  d:-121, track:"commercial" },
+    { kw:"contest platform",           pos:"4→2",   d:+118, track:"commercial" },
+    { kw:"giveaway websites",          pos:"2→1",   d:+96,  track:"commercial" },
+    { kw:"social media giveaways",     pos:"2→4",   d:-88,  track:"commercial" },
+    { kw:"social media giveaway tools",pos:"5→2",   d:+74,  track:"commercial" },
+    { kw:"gleam pricing",              pos:"8→11",  d:-64,  track:"commercial" },
+    { kw:"contest promotion",          pos:"2→2",   d:+41,  track:"informational" },
+    { kw:"no purchase is necessary",   pos:"3→5",   d:-38,  track:"informational" },
+    { kw:"random name drawing",        pos:"7→7",   d:+29,  track:"commercial" }
+  ],
 
-  // 2 · diverging value chart
-  (function () {
-    var host = document.getElementById("s-value-chart");
-    var rows = (data.value_chart || []).slice().sort(function (a, b) { return b.value_change - a.value_change; });
-    if (!rows.length) { emptyMsg(host, "No movers with a computable value change."); return; }
-    var max = 1;
-    rows.forEach(function (r) { max = Math.max(max, Math.abs(r.value_change)); });
-    rows.forEach(function (r) {
-      var row = el("div", "chart-row");
-      row.appendChild(el("div", "name" + (r.track === "brand" ? " track-brand" : ""), r.query));
-      var svgNS = "http://www.w3.org/2000/svg";
-      var svg = document.createElementNS(svgNS, "svg");
-      svg.setAttribute("viewBox", "0 0 200 18"); svg.setAttribute("width", "100%"); svg.setAttribute("height", "18");
-      var mid = 100, half = Math.abs(r.value_change) / max * 96;
-      var axis = document.createElementNS(svgNS, "line");
-      axis.setAttribute("x1", mid); axis.setAttribute("x2", mid); axis.setAttribute("y1", 0); axis.setAttribute("y2", 18);
-      axis.setAttribute("stroke", "var(--line)"); svg.appendChild(axis);
-      var bar = document.createElementNS(svgNS, "rect");
-      var gain = r.value_change >= 0;
-      bar.setAttribute("x", gain ? mid : mid - half); bar.setAttribute("y", 4);
-      bar.setAttribute("width", Math.max(1, half)); bar.setAttribute("height", 10);
-      bar.setAttribute("rx", 2); bar.setAttribute("fill", gain ? "var(--gain)" : "var(--loss)");
-      svg.appendChild(bar);
-      var lbl = document.createElementNS(svgNS, "text");
-      lbl.setAttribute("x", gain ? Math.min(198, mid + half + 3) : Math.max(2, mid - half - 3));
-      lbl.setAttribute("y", 13); lbl.setAttribute("font-size", "9");
-      lbl.setAttribute("text-anchor", gain ? "start" : "end"); lbl.setAttribute("fill", "var(--muted)");
-      lbl.textContent = (r.value_change >= 0 ? "+" : "") + Math.round(r.value_change).toLocaleString();
-      svg.appendChild(lbl);
-      row.appendChild(svg);
-      host.appendChild(row);
-    });
-  })();
+  gained: [
+    { kw:"instagram giveaway picker",   cl:"Tool", was:6, now:4, vol:3600, cpc:0.47, d:+168, url:"/tools/instagram-comment-picker" },
+    { kw:"contest platform",            cl:"Platform-software", was:4, now:2, vol:110, cpc:8.10, d:+118, url:"/app/competitions" },
+    { kw:"giveaway websites",           cl:"Directory-commercial", was:2, now:1, vol:320, cpc:2.02, d:+96, url:"/giveaways" },
+    { kw:"social media giveaway tools", cl:"Platform-software", was:5, now:2, vol:110, cpc:3.05, d:+74, url:"/app/competitions" }
+  ],
 
-  function moversTable(host, rows) {
-    if (!rows || !rows.length) { emptyMsg(host, "None past threshold."); return; }
-    var t = el("table");
-    var head = el("tr");
-    ["Query", "Track", "Pos (was)", "Δpos", "ΔClicks", "ΔValue", "Why"].forEach(function (h, i) {
-      var th = el("th", i >= 2 && i <= 5 ? "num" : null, h); head.appendChild(th);
-    });
-    t.appendChild(head);
-    rows.forEach(function (m) {
-      var tr = el("tr");
-      tr.appendChild(el("td", null, m.query));
-      tr.appendChild(el("td", null, m.track));
-      tr.appendChild(el("td", "num", isNP(m.pos_now) ? "—" : (fmt(m.pos_now, {pos: 1}) + " (" + (isNP(m.pos_prev) ? "new" : fmt(m.pos_prev, {pos: 1})) + ")")));
-      tr.appendChild(el("td", "num", isNP(m.pos_change) ? "—" : fmt(m.pos_change, {pos: 1})));
-      tr.appendChild(el("td", "num", fmt(m.clicks_change)));
-      tr.appendChild(el("td", "num", isNP(m.value_change) ? "—" : (m.value_change >= 0 ? "+" : "") + Math.round(m.value_change).toLocaleString()));
-      tr.appendChild(el("td", null, (m.reasons || []).join("; ")));
-      t.appendChild(tr);
-    });
-    host.appendChild(t);
-  }
-  moversTable(document.getElementById("s-movers-up"), data.movers_up);
-  moversTable(document.getElementById("s-movers-down"), data.movers_down);
+  lost: [
+    { kw:"live draw", cl:"Tool", was:8, now:11, vol:590, cpc:11.24, d:-412,
+      diag:"SERP change — new AI Overview, no Gleam citation", dtype:"serp",
+      url:"/templates/competitions/live-draw" },
+    { kw:"contest software", cl:"Platform-software", was:4, now:6, vol:210, cpc:7.87, d:-196,
+      diag:"URL flip — /solutions/contests ↔ /app/competitions", dtype:"cannib",
+      url:"/app/competitions (keep) + /solutions/contests (301)" },
+    { kw:"instagram comment picker", cl:"Tool", was:9, now:11, vol:1600, cpc:0.43, d:-121,
+      diag:"URL flip — /tools/ ↔ /templates/competitions/", dtype:"cannib",
+      url:"/templates/competitions/instagram-comment-picker (retarget)" },
+    { kw:"social media giveaways", cl:"Platform-software", was:2, now:4, vol:140, cpc:6.97, d:-88,
+      diag:"Ranking loss — SweepWidget gained same week", dtype:"rank",
+      url:"/app/competitions" },
+    { kw:"gleam pricing", cl:"Brand-product", was:8, now:11, vol:"n/a", cpc:4.15, d:-64,
+      diag:"Ranking loss — own brand term outside top 10", dtype:"rank",
+      url:"/pricing" }
+  ],
 
-  // 5 · priority actions
-  (function () {
-    var host = document.getElementById("s-priority-actions");
-    var acts = data.priority_actions || [];
-    if (!acts.length) { emptyMsg(host, "No commercial movement past threshold. Informational items, if any, are in section 10."); return; }
-    var ol = el("ol", "actions");
-    acts.forEach(function (a) {
-      var li = el("li");
-      li.appendChild(el("span", "rule", a.rule || "SEO"));
-      li.appendChild(document.createTextNode(a.what || ""));
-      var w = el("div", "where"); w.textContent = "where: " + (a.where || NP); li.appendChild(w);
-      ol.appendChild(li);
-    });
-    host.appendChild(ol);
-  })();
+  cannib: [
+    { kw:"contest software", cpc:7.87, a:"/solutions/contests", b:"/app/competitions", flips:3,
+      winner:"/app/competitions",
+      act:"REDIRECT. /solutions/contests has no independent job — 301 it, move its 2 referring domains across, repoint 11 internal links." },
+    { kw:"instagram comment picker", cpc:0.43, a:"/tools/instagram-comment-picker", b:"/templates/competitions/instagram-comment-picker", flips:2,
+      winner:"/tools/instagram-comment-picker",
+      act:"DIFFERENTIATE, do not redirect. The template page serves campaign setup — retarget it at \"instagram comment picker template\" and drop the head term from its title and H1." }
+  ],
 
-  // 6 · brand paid
-  (function () {
-    var host = document.getElementById("s-brand-paid");
-    var b = data.brand_paid || {};
-    var t = el("table");
-    [["Spend", fmt(b.spend, {money: true, cur: "A$"})],
-     ["Conversions", isNP(b.conversions) ? NP : fmt(b.conversions)],
-     ["CPA", isNP(b.cpa) ? NP : fmt(b.cpa, {money: true, cur: "A$"})],
-     ["ROAS", isNP(b.roas) ? NP : fmt(b.roas, {dp: 2})],
-     ["Rank-lost impression share", isNP(b.rank_lost_is) ? NP : fmt(normShare(b.rank_lost_is), {pct: true})],
-     ["Budget-lost impression share", isNP(b.budget_lost_is) ? NP : fmt(normShare(b.budget_lost_is), {pct: true})]
-    ].forEach(function (r) {
-      var tr = el("tr");
-      tr.appendChild(el("th", null, r[0]));
-      var td = el("td", "num");
-      if (r[1] === NP) td.appendChild(np()); else td.textContent = r[1];
-      tr.appendChild(td); t.appendChild(tr);
-    });
-    host.appendChild(t);
-    var read = el("p"); read.style.marginTop = "12px";
-    if (isNP(b.lost_share_reading)) read.appendChild(np()); else read.textContent = b.lost_share_reading;
-    host.appendChild(read);
-  })();
-  function normShare(v) { return typeof v === "number" && v > 1 ? v / 100 : v; }
+  ctrgap: [
+    { kw:"giveaway websites", pos:1, impr:2840, actual:"18.4%", expected:"31.2%", gap:"−41%", page:"/giveaways" },
+    { kw:"social media contest", pos:1, impr:1120, actual:"9.8%", expected:"31.2%", gap:"−69%", page:"/app/competitions" },
+    { kw:"qr code live competition", pos:1, impr:390, actual:"11.1%", expected:"31.2%", gap:"−64%", page:"/templates/competitions/qr-code-contest" }
+  ],
 
-  // 7 · conquest
-  (function () {
-    var host = document.getElementById("s-conquest");
-    var q = data.conquest || {};
-    var p = el("p");
-    if (isNP(q.cpa)) { p.appendChild(document.createTextNode("Conquest CPA: ")); p.appendChild(np()); }
-    else { p.textContent = "Conquest CPA: A$" + q.cpa + (isNP(q.vs_brand) ? "" : " (" + q.vs_brand + ")"); }
-    host.appendChild(p);
-  })();
+  sov: [
+    { n:"gleam.io", v:34.2, d:"+0.8", self:true },
+    { n:"rafflecopter.com", v:18.4, d:"−0.3" },
+    { n:"sweepwidget.com", v:11.2, d:"+1.6" },
+    { n:"viralsweep.com", v:8.1, d:"+0.2" },
+    { n:"woobox.com", v:7.3, d:"−0.4" },
+    { n:"rafflepress.com", v:5.9, d:"+0.1" },
+    { n:"kingsumo.com", v:3.1, d:"0.0" }
+  ],
 
-  // 8 · cannibalisation
-  (function () {
-    var host = document.getElementById("s-cannibalisation");
-    var v = data.cannibalisation;
-    if (isNP(v)) { host.appendChild(np()); return; }
-    if (!v.length) { emptyMsg(host, "No queries changed ranking page."); return; }
-    var t = el("table"); var head = el("tr");
-    ["Query", "Was", "Now"].forEach(function (h) { head.appendChild(el("th", null, h)); }); t.appendChild(head);
-    v.forEach(function (r) { var tr = el("tr");
-      tr.appendChild(el("td", null, r.query)); tr.appendChild(el("td", null, r.page_prev)); tr.appendChild(el("td", null, r.page_now)); t.appendChild(tr); });
-    host.appendChild(t);
-  })();
+  displace: [
+    { kw:"social media giveaways", comp:"sweepwidget.com", theirs:"7→3", ours:"2→4", cpc:6.97,
+      resp:"Comparison page — Gleam vs SweepWidget", where:"/compare/gleam-vs-sweepwidget (new)" },
+    { kw:"contest software", comp:"shortstack.com", theirs:"9→5", ours:"4→6", cpc:7.87,
+      resp:"On-page pass after consolidation", where:"/app/competitions" }
+  ],
 
-  // 9 · ctr gaps
-  (function () {
-    var host = document.getElementById("s-ctr-gaps");
-    var v = data.ctr_gaps || [];
-    if (!v.length) { emptyMsg(host, "No CTR gaps past threshold."); return; }
-    var t = el("table"); var head = el("tr");
-    ["Query", "Impr.", "Pos", "CTR", "Benchmark", "Deficit"].forEach(function (h, i) { head.appendChild(el("th", i ? "num" : null, h)); });
-    t.appendChild(head);
-    v.forEach(function (g) { var tr = el("tr");
-      tr.appendChild(el("td", null, g.query));
-      tr.appendChild(el("td", "num", fmt(g.impressions)));
-      tr.appendChild(el("td", "num", fmt(g.position, {pos: 1})));
-      tr.appendChild(el("td", "num", fmt(g.actual_ctr, {pct: true})));
-      tr.appendChild(el("td", "num", fmt(g.expected_ctr, {pct: true})));
-      tr.appendChild(el("td", "num", fmt(g.deficit, {pct: true})));
-      t.appendChild(tr); });
-    host.appendChild(t);
-  })();
+  newpages: [
+    "sweepwidget.com/blog/giveaway-tools-2026 — entered at #6 for \"giveaway tools\" (A$1,209 paid spend, ROAS 1.17)",
+    "rafflepress.com/instagram-giveaway-picker/ — entered at #8 for \"instagram giveaway picker\" (3,600 vol)"
+  ],
 
-  // 10 · informational
-  (function () {
-    var host = document.getElementById("s-informational");
-    var v = data.informational || [];
-    if (!v.length) { emptyMsg(host, "No informational items past threshold."); return; }
-    var t = el("table"); var head = el("tr");
-    ["Query", "Impr.", "Pos (was)", "Why"].forEach(function (h, i) { head.appendChild(el("th", i >= 1 && i <= 2 ? "num" : null, h)); });
-    t.appendChild(head);
-    v.forEach(function (m) { var tr = el("tr");
-      tr.appendChild(el("td", null, m.query));
-      tr.appendChild(el("td", "num", fmt(m.impressions_now)));
-      tr.appendChild(el("td", "num", (isNP(m.pos_now) ? "—" : fmt(m.pos_now, {pos: 1})) + " (" + (isNP(m.pos_prev) ? "new" : fmt(m.pos_prev, {pos: 1})) + ")"));
-      tr.appendChild(el("td", null, (m.reasons || []).join("; ")));
-      t.appendChild(tr); });
-    host.appendChild(t);
-  })();
+  ai: {
+    kpis: [
+      { k:"Commercial terms with AI Overview", v:"12 / 36", d:"+2 WoW", dir:"dn" },
+      { k:"Gleam citation share", v:"41.7%", d:"5 of 12 · −8.3 WoW", dir:"dn" },
+      { k:"Featured snippets held", v:"4", d:"unchanged", dir:"flat" }
+    ],
+    rows: [
+      { kw:"live draw", aio:"Yes — new", cited:"No", who:"ShortStack, Woobox",
+        act:"Add direct-answer block + FAQ schema", where:"/templates/competitions/live-draw" },
+      { kw:"giveaway platform", aio:"Yes", cited:"Yes", who:"Gleam, Rafflecopter", act:"Hold", where:"/" },
+      { kw:"how to run a giveaway", aio:"Yes", cited:"No", who:"Rafflecopter, HubSpot",
+        act:"Guide hub — already briefed", where:"/guides/how-to-run-a-giveaway (new)" },
+      { kw:"contest software", aio:"No", cited:"—", who:"—", act:"Monitor", where:"/app/competitions" }
+    ]
+  },
 
-  // 11 & 12 · GA4 sections (no connector, no manual field)
-  (function () {
-    [["s-ga4-organic-revenue", data.ga4_organic_revenue],
-     ["s-referral-revenue", data.referral_revenue]].forEach(function (pair) {
-      var host = document.getElementById(pair[0]);
-      if (isNP(pair[1])) { host.appendChild(np()); }
-    });
-  })();
+  queue: [
+    { id:"REVENUE_PAGE_UNDERRANKING", p:1, title:"High revenue per session, low position", n:2,
+      items:[
+        { do:"gleam pricing — A$2.16/session, ranking #11 on our own brand term. Title, H1, plan comparison table, internal links from / and /app/competitions.",
+          where:"/pricing" },
+        { do:"random name picker — A$1.55/session at #7. Entity coverage pass against the top 3.",
+          where:"/templates/competitions/random-name-picker" }
+      ],
+      why:"Revenue per session is already proven on these pages. Improving position on a page that converts beats building a page that might." },
+
+    { id:"BRAND_DEFEND", p:1, title:"Brand rank gap — 45.2% of impressions lost", n:4,
+      items:[
+        { do:"Raise bids on \"gleam\" (50.0% impression share), \"gleam software\" (11.1%) and \"gleam alternatives\" (25.0%). Rank-lost is 45.2% against budget-lost of 3.3%, so this is bidding, not budget.",
+          where:"Google Ads 9047806202 → Gleam - Brand campaign" },
+        { do:"\"gleam app\" spent A$185.69 over 43 clicks with zero conversions at 60% impression share. Check the ad's final URL — this is landing intent, not delivery.",
+          where:"Google Ads → Gleam - Brand → gleam app ad group" },
+        { do:"Move budget from the Competitors campaign (CPA A$244.35, ROAS 0.50) into the brand rank gap (CPA A$41.69). 5.9× cheaper per conversion.",
+          where:"Google Ads → Competitors → reduce; Gleam - Brand → increase" },
+        { do:"Strengthen /blog/comparisons/ — it already ranks #8 for \"gleam alternative\". Woorise holds #1 with a page built specifically to target Gleam. Reposition ours as the canonical comparison hub and link it from /pricing and /.",
+          where:"/blog/comparisons/" }
+      ],
+      why:"All four are verified from the account and the live SERP. The bid changes need no content and can ship today." },
+
+    { id:"DECANNIBALISE", p:1, title:"Consolidate cannibalised URLs", n:2,
+      items:[
+        { do:"contest software — 301 the loser, move its 2 referring domains, repoint 11 internal links. A$7.87 CPC, currently #6.",
+          where:"/solutions/contests → 301 → /app/competitions" },
+        { do:"instagram comment picker — differentiate rather than redirect; retarget at the template modifier and strip the head term from title and H1.",
+          where:"/templates/competitions/instagram-comment-picker" }
+      ],
+      why:"Two Gleam URLs alternating in one SERP splits signals. Step 4 — repointing internal links — is what actually resolves it." },
+
+    { id:"INTERNAL_LINK", p:1, title:"Internal links + depth pass, positions 9–15", n:3,
+      items:[
+        { do:"live draw — #11 on an A$11.24 CPC term, biggest single loss this week.", where:"/templates/competitions/live-draw" },
+        { do:"gleam pricing — #11 on own brand term, should be top 3.", where:"/pricing" },
+        { do:"instagram comment picker — #11, 1,600 monthly volume.", where:"/tools/instagram-comment-picker" }
+      ],
+      why:"Highest value per position gained of any rule. All three pages already exist; none need new content." },
+
+    { id:"AI_CITATION", p:1, title:"AI Overview present, Gleam not cited", n:2,
+      items:[
+        { do:"live draw — new AI Overview cites ShortStack and Woobox. Add a direct-answer block and FAQ schema.",
+          where:"/templates/competitions/live-draw" },
+        { do:"how to run a giveaway — cites Rafflecopter and HubSpot. The guide hub covers this.",
+          where:"/guides/how-to-run-a-giveaway (new)" }
+      ],
+      why:"Citation share fell 8.3 points. The content ranks #2–3 already — it is not structured for extraction." },
+
+    { id:"METADATA", p:2, title:"Rewrite title and meta — CTR below benchmark", n:3,
+      items:[
+        { do:"social media contest — #1, CTR 9.8% against 31.2% expected (−69%).", where:"/app/competitions" },
+        { do:"qr code live competition — #1, CTR 11.1% (−64%).", where:"/templates/competitions/qr-code-contest" },
+        { do:"giveaway websites — #1, CTR 18.4% (−41%).", where:"/giveaways" }
+      ],
+      why:"Three number-one rankings under-earning their position. Cheapest wins in the report — no new content, no links." },
+
+    { id:"TRAFFIC_NO_REVENUE", p:2, title:"High traffic, weak conversion — route to CRO", n:1,
+      items:[
+        { do:"8,940 organic sessions at A$0.28/session, 7.7× below /pricing. The ranking is fine; the tool-to-product path is not.",
+          where:"/tools/instagram-comment-picker" }
+      ],
+      why:"Not an SEO problem. Sending this to content would waste the finding." },
+
+    { id:"MOVE_TO_ORGANIC", p:2, title:"Informational terms sitting in paid", n:4,
+      items:[
+        { do:"social media contest ideas — A$629 spend, 3 conversions, CPA A$210.", where:"/guides/social-media-contest-ideas (new)" },
+        { do:"social media competition ideas — A$561 spend, 0 conversions.", where:"/guides/social-media-contest-ideas (new)" },
+        { do:"social media contest ideas 2021 — A$252 spend, 0 conversions. Add as a paid negative.", where:"Google Ads → negative keyword" },
+        { do:"how to run a social media contest — A$200 spend, 2 conversions.", where:"/guides/how-to-run-a-giveaway (new)" }
+      ],
+      why:"Informational terms return ROAS 0.33 against 0.88 on tool terms. A$1,642 belongs in the guide hub." },
+
+    { id:"CREATE", p:2, title:"New pages — commercial intent, paid but not ranking", n:2,
+      items:[
+        { do:"online raffle creator / generator cluster — A$889 spend, 269 clicks, no organic ranking.",
+          where:"/templates/competitions/online-raffle (new)" },
+        { do:"giveaway maker — A$1,910 spend, 622 clicks, no ranking. \"giveaway creator\" already ranks #1, so the topic is winnable.",
+          where:"/app/competitions (expand) or /tools/giveaway-maker (new)" }
+      ],
+      why:"Highest spend with zero organic coverage." },
+
+    { id:"ANCHOR_UPGRADE", p:2, title:"Earning links using brand or naked anchors", n:2,
+      items:[
+        { do:"A$620 revenue on a bare \"Gleam\" anchor across 4 links. Request \"giveaway plugin\" on the next touch.",
+          where:"wpbeginner.com/best-giveaway-plugins/" },
+        { do:"1,210 sessions, A$310 revenue — most traffic, least money per visit. Naked URLs carry no intent.",
+          where:"reddit.com/r/marketing — no action, monitor only" }
+      ],
+      why:"Commercial anchors average A$4.06 per referral session against A$0.66 for brand and naked. Same link, different value." },
+
+    { id:"PAUSE_PAID", p:3, title:"Pause-and-measure tranche", n:2,
+      items:[
+        { do:"7 non-brand terms ranking #1–3 with live spend, ≈A$312/mo. Tranche in threes, 21-day windows.",
+          where:"Google Ads account 9047806202" },
+        { do:"Brand terms are excluded from this rule — BRAND_DEFEND_PAID overrides. Four rivals bid on them.",
+          where:"Google Ads → brand campaign, do not pause" }
+      ],
+      why:"Do not assume 1:1 recapture. Pausing is a test, not a saving — and never on a contested brand term." }
+  ],
+
+  brand: {
+    _source:"Google Ads account 9047806202, 2026-04-29 to 2026-07-27 (90d, AUD). Semrush US database. All figures below are pulled, not modelled.",
+    kpis: [
+      { k:"Brand rank-lost impression share", v:"45.2%", d:"budget-lost only 3.3%", dir:"dn" },
+      { k:"Brand paid CPA", v:"A$41.69", d:"vs A$244.35 on conquest · 5.9× cheaper", dir:"up" },
+      { k:"Brand paid ROAS", v:"0.92", d:"A$4,700 spend → A$4,304 value", dir:"flat" }
+    ],
+    paid: [
+      { kw:"gleam", spend:3515.96, clicks:1076, conv:82.5, cpa:42.6, roas:0.98, is:50.0,
+        verdict:"Core term, half the impressions lost to rank. Raise bid before building anything.", fix:"Google Ads → Gleam - Brand" },
+      { kw:"gleam io", spend:521.22, clicks:220, conv:20.0, cpa:26.0, roas:0.79, is:77.1,
+        verdict:"Cheapest brand CPA in the account. Healthy.", fix:"Hold — /" },
+      { kw:"gleam app", spend:185.69, clicks:43, conv:0.0, cpa:0, roas:0.00, is:60.2,
+        verdict:"A$186 and 43 clicks for ZERO conversions. Wrong landing intent, not a bid problem.", fix:"/app/competitions — check the ad's final URL" },
+      { kw:"gleam io giveaway", spend:125.17, clicks:49, conv:3.0, cpa:41.7, roas:1.02, is:79.6,
+        verdict:"Profitable, well covered.", fix:"Hold" },
+      { kw:"gleam competition app", spend:109.14, clicks:39, conv:2.0, cpa:54.6, roas:1.15, is:48.2,
+        verdict:"Best ROAS of the volume terms but only 48% impression share.", fix:"Google Ads → Competitions campaign" },
+      { kw:"giveaway gleam", spend:91.70, clicks:27, conv:1.0, cpa:91.7, roas:0.90, is:56.8,
+        verdict:"CPA 2.2× the brand average. Tighten match type.", fix:"Google Ads → phrase to exact" },
+      { kw:"gleam pricing", spend:64.03, clicks:18, conv:1.8, cpa:35.1, roas:1.38, is:85.1,
+        verdict:"Highest ROAS of any brand term. Paid covers it; organic does not.", fix:"/pricing" },
+      { kw:"gleam alternatives", spend:9.74, clicks:2, conv:0.4, cpa:25.2, roas:0.12, is:25.0,
+        verdict:"25% impression share on our own alternative query — we are barely present.", fix:"Google Ads + /blog/comparisons/" },
+      { kw:"gleam io alternatives", spend:9.63, clicks:2, conv:0.0, cpa:0, roas:0.00, is:43.8,
+        verdict:"Same gap, plural variant.", fix:"Google Ads + /blog/comparisons/" },
+      { kw:"gleam software", spend:1.48, clicks:1, conv:0.0, cpa:0, roas:0.00, is:11.1,
+        verdict:"11% impression share — effectively absent.", fix:"Google Ads → Gleam - Brand" }
+    ],
+    paidsrc:"Brand total: A$4,700.15 spend, 1,504 clicks, 112.7 conversions, A$4,304.22 value. CPA A$41.69, ROAS 0.92, average CPC A$3.13. Impression share is impression-weighted across match types. Compare with the Competitors campaign at CPA A$244.35 and ROAS 0.50, and Competitions at CPA A$159.48.",
+    serp: [
+      { pos:1, dom:"woorise.com", url:"/compare/gleam", type:"Dedicated comparison page targeting Gleam", threat:"critical" },
+      { pos:2, dom:"picreel.com", url:"/blog/gleam-alternatives/", type:"Listicle", threat:"high" },
+      { pos:3, dom:"reddit.com", url:"/r/Entrepreneur — 2016 thread", type:"Forum, decade-old", threat:"low" },
+      { pos:4, dom:"rafflepress.com", url:"/free-gleam-alternatives-for-wordpress/", type:"Competitor listicle", threat:"high" },
+      { pos:5, dom:"viral-loops.com", url:"/blog/gleam-io-alternative-for-referral-programs/", type:"Competitor comparison", threat:"high" },
+      { pos:6, dom:"g2.com", url:"/products/gleam/competitors/alternatives", type:"Review aggregator", threat:"medium" },
+      { pos:7, dom:"upviral.com", url:"/alternative/upviral-vs-gleam", type:"Competitor vs page", threat:"high" },
+      { pos:8, dom:"gleam.io", url:"/blog/comparisons/", type:"OUR PAGE — ranking #8", threat:"ours" },
+      { pos:9, dom:"copywritersnow.com", url:"/gleam-alternatives/", type:"Affiliate listicle", threat:"low" },
+      { pos:10, dom:"cbinsights.com", url:"/company/gleam-2/alternatives-competitors", type:"Data aggregator", threat:"low" },
+      { pos:11, dom:"socialman.net", url:"/blog/best-gleam-alternatives/", type:"Competitor listicle", threat:"medium" },
+      { pos:12, dom:"easyappsecom.com", url:"/guides/gleam-alternative-shopify", type:"Affiliate guide", threat:"low" }
+    ],
+    attack: [
+      { c:"votigo.com", cat:"Sweepstakes administration — direct rival", pos:1, last:"Jun 2026", reads:"Genuine category competitor bidding on brand-adjacent intent" },
+      { c:"loyaltylion.com", cat:"Shopify loyalty — adjacent", pos:2, last:"Jun 2026", reads:"Adjacent category, overlapping ecommerce buyer" },
+      { c:"viral-loops.com", cat:"Referral marketing — direct rival", pos:5, last:"Mar 2026", reads:"Also ranks #5 organically. The most committed attacker across both channels." },
+      { c:"awardforce.com", cat:"Competition management — direct rival", pos:1, last:"Mar 2026", reads:"Direct rival, strong ad position" },
+      { c:"jotform.com", cat:"Form builder with giveaway product", pos:3, last:"Mar 2026", reads:"Adjacent, has a dedicated giveaway form page" },
+      { c:"braze.com", cat:"Email/CRM — not a rival", pos:1, last:"May 2026", reads:"Broad-match spill, ignore" },
+      { c:"realize.com / axon.ai / mountain.com / facilisgroup.com", cat:"Ad platforms, unrelated", pos:2, last:"Mar 2026", reads:"Broad-match noise, no action" }
+    ],
+    note:"<b>45.2% of brand impressions are lost to rank, not budget.</b> Budget-lost share is only 3.3%, so this is not a spend ceiling — on nearly half of all searches for Gleam's own name, someone outbids or outranks the brand campaign. That is the single largest verified exposure in this report, and the fix is a bid change, not content.<br><br><b>Brand is 5.9× cheaper than conquest.</b> Brand CPA is A$41.69 against A$244.35 on the Competitors campaign (ROAS 0.50) and A$159.48 on Competitions. Any budget moved from conquest to closing the brand rank gap improves blended CPA immediately.<br><br><b>\"gleam app\" spent A$185.69 across 43 clicks for zero conversions.</b> At 60% impression share the delivery is fine, so this is a landing-intent problem — worth checking the ad's final URL before anything else.",
+    datagap:"<b>Correction to an earlier draft of this report.</b> A previous version claimed SweepWidget and RafflePress were using \"Gleam\" inside ad copy and recommended a trademark complaint. That was not verified and the pulled data does not support it: of the advertisers actually bidding on brand-modifier terms, none use the Gleam mark in their ad text, and SweepWidget does not appear in the paid results at all. No trademark action is warranted. The real organic attackers are woorise.com, picreel.com, rafflepress.com, viral-loops.com and upviral.com.<br><br><b>Also corrected:</b> Gleam is <i>not</i> absent from the \"gleam alternative\" SERP — /blog/comparisons/ ranks #8. The action is to strengthen and reposition that existing page, not to build a new one. Woorise holds #1 with a page built specifically to target Gleam.<br><br><b>Still to pull:</b> organic positions for the remaining brand terms (only \"gleam alternative\" was checked this run) and GA4 brand revenue. Note that semrush_keyword_ads_history costs 100 API units per line — 1,900 units for the single query above — so the loop should check brand-modifier terms weekly and core brand monthly."
+  },
+
+  rev: {
+    kpis: [
+      { k:"Organic revenue (GA4)", v:"A$18,412", d:"+2.8% WoW", dir:"up" },
+      { k:"Revenue per 1k organic clicks", v:"A$742", d:"−1.1% WoW", dir:"dn" },
+      { k:"Share from commercial pages", v:"87.4%", d:"+0.6 WoW", dir:"up" }
+    ],
+    rows: [
+      { pg:"/app/competitions", rev:5240, sess:3180, q:"social media contest", pos:1, clicks:312,
+        read:"Best earner. Protect it — it is also the consolidation target." },
+      { pg:"/giveaways", rev:3890, sess:6420, q:"giveaway websites", pos:1, clicks:1240,
+        read:"High volume, low rev/session — directory traffic, working as intended." },
+      { pg:"/templates/competitions/*", rev:3110, sess:2010, q:"random name picker", pos:7, clicks:186,
+        read:"A$1.55/session at position 7. Expanding this cluster is the clearest upside." },
+      { pg:"/tools/instagram-comment-picker", rev:2480, sess:8940, q:"instagram giveaway picker", pos:4, clicks:2180,
+        read:"Largest traffic, weakest conversion. A tool-to-product path issue, not an SEO one." },
+      { pg:"/pricing", rev:1920, sess:890, q:"gleam pricing", pos:11, clicks:64,
+        read:"Highest rev/session in the report, ranking #11 on its own brand term. Best single fix available." },
+      { pg:"/solutions/contests", rev:740, sess:410, q:"contest software", pos:6, clicks:48,
+        read:"Low revenue and cannibalising /app/competitions. Redirect (section 04)." },
+      { pg:"/guides/contest-promotion", rev:210, sess:1340, q:"contest promotion", pos:2, clicks:198,
+        read:"Informational — judge on assist and citation, not this number." }
+    ],
+    note:"<b>The finding worth acting on:</b> /pricing earns A$2.16 per session — 7.7× /tools/instagram-comment-picker — on 890 sessions while ranking #11 for \"gleam pricing\". Moving it into the top 3 on its own brand term is worth more than any new page in the queue, and needs no new content."
+  },
+
+  ref: {
+    kpis: [
+      { k:"Referral revenue (GA4)", v:"A$4,600", d:"+6.2% WoW", dir:"up" },
+      { k:"Revenue per referring domain", v:"A$767", d:"6 domains earning", dir:"flat" },
+      { k:"Revenue from commercial anchors", v:"78.9%", d:"of referral revenue", dir:"up" }
+    ],
+    rows: [
+      { dom:"shopify.com", page:"/blog/giveaway-apps", anchor:"giveaway app", type:"commercial", sess:420, rev:1840, dr:96, links:2 },
+      { dom:"socialmediaexaminer.com", page:"/how-to-run-social-media-contest/", anchor:"run a giveaway", type:"commercial", sess:190, rev:980, dr:88, links:1 },
+      { dom:"hubspot.com", page:"/marketing/giveaway-tools", anchor:"giveaway tools", type:"commercial", sess:260, rev:710, dr:93, links:3 },
+      { dom:"wpbeginner.com", page:"/best-giveaway-plugins/", anchor:"Gleam", type:"brand", sess:340, rev:620, dr:89, links:4 },
+      { dom:"reddit.com", page:"/r/marketing (47 threads)", anchor:"gleam.io", type:"naked URL", sess:1210, rev:310, dr:92, links:47 },
+      { dom:"producthunt.com", page:"/posts/gleam", anchor:"Gleam", type:"brand", sess:88, rev:140, dr:91, links:1 }
+    ],
+    note:"<b>Commercial anchors earn 6× per session.</b> Links anchored on a commercial noun — \"giveaway app\", \"giveaway tools\", \"run a giveaway\" — average A$4.06 revenue per referral session. Brand and naked-URL anchors average A$0.66. Reddit sends the most traffic of any domain and the least money per visit, because a naked link carries no intent. Actionable for outreach: ask for a descriptive commercial anchor, not a brand mention. Same link, materially different value."
+  },
+
+  info: {
+    kpis: [
+      { k:"Informational impressions", v:"184.2k", d:"−2.4% WoW", dir:"dn" },
+      { k:"Pages decaying 3wk+", v:"3", d:"+1 WoW", dir:"dn" },
+      { k:"Guide citation share", v:"38.0%", d:"−4.0 WoW", dir:"dn" }
+    ],
+    rows: [
+      { pg:"/guides/no-purchase-necessary", impr:"−18%", clicks:"−24%", wks:4, v:"Refresh brief — queued" },
+      { pg:"/guides/facebook-contest", impr:"−21%", clicks:"−31%", wks:3, v:"Refresh brief — queued" },
+      { pg:"/guides/contest-promotion", impr:"−9%", clicks:"−12%", wks:3, v:"Monitor — below click threshold" }
+    ],
+    paid: "A$1,642/mo of paid spend sits on informational queries with a blended ROAS of 0.33. The guide hub in the 90-day plan covers all four; shipping it converts that spend into an owned asset rather than a rented click."
+  },
+
+  method: [
+    "<b>Search Console (primary, own data)</b> — gsc MCP: get_search_analytics and get_advanced_search_analytics for clicks, impressions, CTR and position; compare_search_periods with dimensions page,query for week-on-week deltas; get_search_by_page_query for the page→query join in section 05; get_ctr_by_position for the CTR benchmarks in section 04; inspect_url_enhanced and check_indexing_issues after any consolidation.",
+    "<b>Google Analytics 4</b> — ga4-mcp-server run_report. Section 05: dimensions landingPagePlusQueryString + sessionDefaultChannelGroup filtered to Organic Search, metrics sessions and purchaseRevenue. Section 06: dimension sessionSourceMedium filtered to referral. Last-click attribution — a floor that under-credits assists.",
+    "<b>Ahrefs</b> — rank-tracker-overview and site-explorer-organic-keywords for ranking history beyond what GSC reports; site-explorer-anchors and site-explorer-referring-domains for the anchor text in section 06; site-audit-issues for technical; serp-overview for AI Overview presence.",
+    "<b>Semrush</b> — volume, CPC, traffic value and competitor share of voice (US database). Traffic value is derived as Δ(volume × own-site CTR at position) × CPC.",
+    "<b>Brand paid</b> — google-ads-mcp search on keyword_view and campaign resources, account 9047806202, segments.date BETWEEN 2026-04-29 AND 2026-07-27. Rank-lost and budget-lost impression share come from the campaign resource, which is the only place the distinction is visible. GAQL has no LAST_90_DAYS literal — use explicit BETWEEN dates.",
+    "<b>Brand attack detection</b> — semrush_keyword_ads_history for advertisers bidding over 12 months (100 API units per line, so scope it tightly) and semrush_keyword_organic_results for the organic SERP (10 units per line). Ad-copy trademark use must be read from the returned ad text, never inferred from the advertiser's identity.",
+    "<b>Brand revenue</b> — GSC brand-query clicks joined to GA4 revenue on the landing pages those queries resolve to (/, /pricing, /login). Brand and non-brand are split on the brand_terms list in config, never on Semrush intent tags.",
+    "Snapshots are written to data/{date}/ and diffed. No API returns \"what changed since yesterday\" — the history is ours to keep.",
+    "Volume, CPC, traffic value, competitor SoV — Semrush MCP (US database). Volume and CPC are Semrush's; traffic value is derived as Δ(volume × own-site CTR at position) × CPC.",
+    "Paid spend, conversions, ROAS — Google Ads account 9047806202, full commercial keyword export (3,880 keywords, A$135,226 spend).",
+    "Technical — Ahrefs Site Audit: site-audit-issues filtered to URLs in the commercial set.",
+    "Classification is deterministic from config/report-config.json. Semrush intent tags route unmatched keywords to TRIAGE only; they never assign a track.",
+    "Thresholds: commercial drop ≥3 positions, any exit from top 10, any loss of #1. Materiality floor A$25 value delta and 40 monthly volume. Nothing below position 20 unless CPC ≥ A$6."
+  ]
+};
+/* @@REPORT_DATA_END@@ */
+
+/* ================= RENDER ================= */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const money = n => (n<0?'−':'+') + 'A$' + Math.abs(n).toLocaleString('en-AU');
+const dirClass = d => d==='up' ? 'up' : d==='dn' ? 'dn' : 'flat';
+const arrow = d => d==='up' ? '▲ ' : d==='dn' ? '▼ ' : '· ';
+
+$('eyebrow').textContent = `Gleam.io · Weekly SEO Report · ${REPORT.week}`;
+$('headline').textContent = REPORT.status.level === 'quiet'
+  ? 'No commercial movement past threshold'
+  : `${REPORT.priority1} priority-1 items, ${REPORT.findings} findings`;
+$('runmeta').innerHTML = [
+  REPORT.period,
+  `Generated ${REPORT.generated}`,
+  `Ahrefs ${REPORT.units.ahrefs.toLocaleString()} units · Semrush ${REPORT.units.semrush.toLocaleString()} units`
+].map(s=>`<span>${esc(s)}</span>`).join('');
+
+$('status').innerHTML = REPORT.status.level === 'quiet'
+  ? `<div class="callout quiet"><b>Quiet week.</b> ${REPORT.status.quiet_line}</div>`
+  : `<div class="callout red">${REPORT.status.line}</div>`;
+
+$('kpis').innerHTML = REPORT.kpis.map(k => `
+  <div class="kpi"><div class="k">${esc(k.k)}</div><div class="v">${esc(k.v)}</div>
+  <div class="d ${dirClass(k.dir)}">${arrow(k.dir)}${esc(k.d)}</div>
+  <div class="d flat" style="font-family:Inter">${esc(k.note)}</div></div>`).join('');
+$('kpisrc').textContent = REPORT.kpisrc;
+
+/* Signature: diverging strip, scaled to the largest absolute move */
+(() => {
+  const rows = [...REPORT.diverge].sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+  const max = Math.max(...rows.map(r=>Math.abs(r.d))) || 1;
+  $('diverge').innerHTML = rows.map(r => {
+    const w = (Math.abs(r.d)/max)*49;
+    const cls = (r.d>=0?'pos':'neg') + (r.track==='informational'?' info':'');
+    return `<div class="dv-row">
+      <div class="dv-kw">${esc(r.kw)}<i>${esc(r.pos)}</i></div>
+      <div class="dv-track"><span class="dv-bar ${cls}" style="width:${w}%"></span></div>
+      <div class="dv-val ${r.d>=0?'up':'dn'}">${money(r.d)}</div></div>`;
+  }).join('') + `
+    <div class="dv-axis"><span>Keyword</span>
+      <span class="mid"><span>−A$${max.toLocaleString()}</span><span>0</span><span>+A$${max.toLocaleString()}</span></span>
+      <span style="text-align:right">Δ value/mo</span></div>
+    <div class="legend">
+      <span><i style="background:var(--green)"></i>Commercial gain</span>
+      <span><i style="background:var(--red)"></i>Commercial loss</span>
+      <span><i style="background:var(--green);opacity:.42"></i>Informational</span>
+    </div>`;
 })();
+
+$('gained').innerHTML = REPORT.gained.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td><td class="l">${esc(r.cl)}</td>
+  <td>${r.was}</td><td class="up">${r.now}</td><td>${r.vol.toLocaleString?r.vol.toLocaleString():r.vol}</td>
+  <td>$${r.cpc.toFixed(2)}</td><td class="up">${money(r.d)}</td>
+  <td class="l mono">${esc(r.url)}</td></tr>`).join('');
+
+const dbadge = t => ({cannib:'<span class="b p">cannibalisation</span>',
+                     serp:'<span class="b bl">SERP change</span>',
+                     rank:'<span class="b r">ranking loss</span>'}[t] || '');
+$('lost').innerHTML = REPORT.lost.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td><td class="l">${esc(r.cl)}</td>
+  <td>${r.was}</td><td class="dn">${r.now}</td>
+  <td>${typeof r.vol==='number'?r.vol.toLocaleString():esc(r.vol)}</td>
+  <td>$${r.cpc.toFixed(2)}</td><td class="dn">${money(r.d)}</td>
+  <td class="l">${dbadge(r.dtype)} ${esc(r.diag)}</td>
+  <td class="l mono">${esc(r.url)}</td></tr>`).join('');
+
+$('cannib').innerHTML = REPORT.cannib.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td><td>$${r.cpc.toFixed(2)}</td>
+  <td class="l mono">${esc(r.a)}</td><td class="l mono">${esc(r.b)}</td>
+  <td>${r.flips}</td><td class="l">${esc(r.winner)}</td>
+  <td class="l">${esc(r.act)}</td></tr>`).join('');
+
+$('ctrgap').innerHTML = REPORT.ctrgap.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td><td>${r.pos}</td><td>${r.impr.toLocaleString()}</td>
+  <td>${esc(r.actual)}</td><td class="flat">${esc(r.expected)}</td>
+  <td class="dn">${esc(r.gap)}</td><td class="l mono">${esc(r.page)}</td></tr>`).join('');
+
+(() => {
+  const max = Math.max(...REPORT.sov.map(s=>s.v));
+  $('sov').innerHTML = REPORT.sov.map(s => `<div class="sov">
+    <span${s.self?' style="font-weight:700;color:var(--ink)"':''}>${esc(s.n)}</span>
+    <div class="t"><i style="width:${(s.v/max)*100}%;background:${s.self?'var(--green)':'#7a8794'}"></i></div>
+    <b>${s.v}% <span class="${s.d.startsWith('+')?'up':s.d.startsWith('−')?'dn':'flat'}">${esc(s.d)}</span></b></div>`).join('');
+})();
+
+$('displace').innerHTML = REPORT.displace.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td><td class="l">${esc(r.comp)}</td>
+  <td class="up">${esc(r.theirs)}</td><td class="dn">${esc(r.ours)}</td>
+  <td>$${r.cpc.toFixed(2)}</td><td class="l">${esc(r.resp)}</td>
+  <td class="l mono">${esc(r.where)}</td></tr>`).join('');
+
+$('newpages').innerHTML = REPORT.newpages.map(s=>`<li>${esc(s)}</li>`).join('');
+
+$('aikpis').innerHTML = REPORT.ai.kpis.map(k => `
+  <div class="kpi"><div class="k">${esc(k.k)}</div><div class="v">${esc(k.v)}</div>
+  <div class="d ${dirClass(k.dir)}">${arrow(k.dir)}${esc(k.d)}</div></div>`).join('');
+$('aitable').innerHTML = REPORT.ai.rows.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td>
+  <td class="l">${r.aio.startsWith('Yes')?'<span class="b a">'+esc(r.aio)+'</span>':'<span class="b n">No</span>'}</td>
+  <td class="l">${r.cited==='Yes'?'<span class="b g">Yes</span>':r.cited==='No'?'<span class="b r">No</span>':'—'}</td>
+  <td class="l">${esc(r.who)}</td><td class="l">${esc(r.act)}</td>
+  <td class="l mono">${esc(r.where)}</td></tr>`).join('');
+
+$('queue').innerHTML = REPORT.queue.map(q => `
+  <div class="q p${q.p}">
+    <h4>${esc(q.title)} <span class="b ${q.p===1?'r':q.p===2?'a':'bl'}">P${q.p}</span>
+      <span class="b n">${esc(q.id)}</span><span class="b n">${q.n} item${q.n===1?'':'s'}</span></h4>
+    <ul>${q.items.map(i=>`<li>${esc(i.do)}<br><span class="mono" style="font-size:11.5px;color:var(--ink-3)">→ ${esc(i.where)}</span></li>`).join('')}</ul>
+    <div class="why"><b>Why this rule fired:</b> ${esc(q.why)}</div>
+  </div>`).join('');
+
+const kpiCards = arr => arr.map(k => `
+  <div class="kpi"><div class="k">${esc(k.k)}</div><div class="v">${esc(k.v)}</div>
+  <div class="d ${dirClass(k.dir)}">${arrow(k.dir)}${esc(k.d)}</div></div>`).join('');
+
+const threatBadge = t => ({critical:'<span class="b r">critical</span>', high:'<span class="b r">high</span>',
+  medium:'<span class="b a">medium</span>', low:'<span class="b n">low</span>',
+  ours:'<span class="b g">ours</span>'}[t] || t);
+$('brkpis').innerHTML = kpiCards(REPORT.brand.kpis);
+$('brnote').innerHTML = REPORT.brand.note;
+$('brpaid').innerHTML = REPORT.brand.paid.map(r => `<tr>
+  <td class="l"><b>${esc(r.kw)}</b></td>
+  <td>A$${r.spend.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+  <td>${r.clicks.toLocaleString('en-AU')}</td><td>${r.conv.toFixed(1)}</td>
+  <td>${r.cpa?'A$'+r.cpa.toFixed(2):'—'}</td>
+  <td class="${r.roas>=1?'up':r.roas===0?'dn':''}">${r.roas.toFixed(2)}</td>
+  <td class="${r.is<50?'dn':r.is>=75?'up':''}">${r.is.toFixed(1)}%</td>
+  <td class="l">${esc(r.verdict)}</td><td class="l mono">${esc(r.fix)}</td></tr>`).join('');
+$('brpaidsrc').textContent = REPORT.brand.paidsrc;
+$('brserp').innerHTML = REPORT.brand.serp.map(r => `<tr${r.threat==='ours'?' style="background:var(--green-bg)"':''}>
+  <td>${r.pos}</td><td class="l"><b>${esc(r.dom)}</b></td><td class="l mono">${esc(r.url)}</td>
+  <td class="l">${esc(r.type)}</td><td class="l">${threatBadge(r.threat)}</td></tr>`).join('');
+$('brattack').innerHTML = REPORT.brand.attack.map(r => `<tr>
+  <td class="l"><b>${esc(r.c)}</b></td><td class="l">${esc(r.cat)}</td><td>${r.pos}</td>
+  <td class="l">${esc(r.last)}</td><td class="l">${esc(r.reads)}</td></tr>`).join('');
+$('brdata').innerHTML = REPORT.brand.datagap;
+
+$('revkpis').innerHTML = kpiCards(REPORT.rev.kpis);
+$('revtable').innerHTML = REPORT.rev.rows.map(r => {
+  const rps = r.rev / r.sess;
+  return `<tr>
+    <td class="l mono">${esc(r.pg)}</td>
+    <td><b>A$${r.rev.toLocaleString('en-AU')}</b></td>
+    <td>${r.sess.toLocaleString('en-AU')}</td>
+    <td class="${rps>=1.5?'up':''}">A$${rps.toFixed(2)}</td>
+    <td class="l">${esc(r.q)}</td>
+    <td class="${r.pos<=3?'up':r.pos>=9?'dn':''}">${r.pos}</td>
+    <td>${r.clicks.toLocaleString('en-AU')}</td>
+    <td class="l">${esc(r.read)}</td></tr>`;
+}).join('');
+$('revnote').innerHTML = REPORT.rev.note;
+
+const atype = t => t==='commercial' ? '<span class="b g">commercial</span>'
+  : t==='brand' ? '<span class="b n">brand</span>' : '<span class="b a">naked URL</span>';
+$('refkpis').innerHTML = kpiCards(REPORT.ref.kpis);
+$('reftable').innerHTML = REPORT.ref.rows.map(r => {
+  const rps = r.rev / r.sess;
+  return `<tr>
+    <td class="l mono">${esc(r.dom)}</td>
+    <td class="l"><b>${esc(r.anchor)}</b></td>
+    <td class="l">${atype(r.type)}</td>
+    <td>${r.sess.toLocaleString('en-AU')}</td>
+    <td><b>A$${r.rev.toLocaleString('en-AU')}</b></td>
+    <td class="${rps>=2?'up':rps<1?'dn':''}">A$${rps.toFixed(2)}</td>
+    <td>${r.dr}</td><td>${r.links}</td>
+    <td class="l mono">${esc(r.page)}</td></tr>`;
+}).join('');
+$('refnote').innerHTML = REPORT.ref.note;
+
+$('infokpis').innerHTML = REPORT.info.kpis.map(k => `
+  <div class="kpi"><div class="k">${esc(k.k)}</div><div class="v">${esc(k.v)}</div>
+  <div class="d ${dirClass(k.dir)}">${arrow(k.dir)}${esc(k.d)}</div></div>`).join('');
+$('infotable').innerHTML = REPORT.info.rows.map(r => `<tr>
+  <td class="l mono">${esc(r.pg)}</td><td class="dn">${esc(r.impr)}</td><td class="dn">${esc(r.clicks)}</td>
+  <td>${r.wks}</td><td class="l">${esc(r.v)}</td></tr>`).join('');
+$('infopaid').innerHTML = REPORT.info.paid;
+
+$('method').innerHTML = REPORT.method.map(s=>`<li>${esc(s)}</li>`).join('');
+$('foot').textContent = `Gleam.io Weekly SEO Report · ${REPORT.week} · generated by the SEO loop · commercial and informational tracks scored separately · spend in AUD.`;
 </script>
 </body>
 </html>
