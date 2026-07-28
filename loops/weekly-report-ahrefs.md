@@ -177,29 +177,37 @@ Next week's diff depends on this; skip it and every week looks like week one.
 
 ## Step 7 — deliver
 
-The **full report is the rendered HTML** — `templates/weekly-report.html` filled with this
-run's data via `gleam_seo.render_html`, all twelve sections including the section 02 diverging
-value chart. A Slack **canvas is markdown and cannot render that HTML or its chart**, so the
-canvas is an at-a-glance summary only; the HTML file is the actual deliverable. Deliver in this
-order:
+The report people read is a **Slack channel canvas in `#seo`** carrying the **full twelve
+sections** — not a summary. Slack renders canvas markdown (headings, tables, callouts) natively
+and privately to the workspace, with no link to break and nothing to download, so the canvas is
+the primary artifact. This report contains internal paid spend and strategy, so **never publish
+it to a public URL** (no GitHub Pages, no public link).
 
-1. **HTML report → Google Drive.** Write the rendered `report.html` to the Drive folder
-   `Gleam SEO reports` (create it if absent), named `SEO-<ISO week>.html`, and get a shareable
-   link. This is the required 12-section format. The Slack connector has **no file-upload
-   tool**, so Drive is where the openable report lives — do not try to attach the HTML to a
-   Slack message, it will not work. *(Optional: to also post it as a native Slack file like the
-   team's older `gleam-*.html` reports, use a Zapier Slack "upload file" action into `#seo`.)*
+Build every section into the canvas from the computed data: the headline table; section 02
+movers as a ranked table (keyword · was→now · Δ value · a simple text bar like `+████`); the
+gained/lost tables with diagnosis; cannibalisation and CTR-gap tables; the brand paid table with
+the rank-lost vs budget-lost reading; competition; AI search; the action queue with each item's
+`where`; informational; and the method log. Sections 05–06 show
+"not pulled this run — requires GA4".
 
-2. **Slack `#seo` channel — channel ID `C08F23HCDQA`, NOT a personal DM.** Create the summary
-   canvas titled `SEO — <ISO week>` in that channel (six headline numbers with WoW change; top
-   three movers up and down with value change; priority actions each with its `where`; brand
-   position summary), then post one short message in `#seo` linking both the canvas and the
-   Drive HTML report. The Slack connector is authenticated **as Eddy**, so anything not
-   explicitly posted to `#seo` lands in his personal space — post the report to the channel.
+Rules that avoid the failures already seen in testing:
 
-3. **DM heads-up to Eddy** — one message, three lines max: the single most important finding,
-   the count of priority items, and the link to the Drive HTML report. This is a personal
-   ping, not the report itself; the report lives in `#seo` + Drive.
+- **Create a NEW channel canvas in `#seo` (channel `C08F23HCDQA`) each run.** Do not reuse or
+  link a canvas ID from a previous run, and never create it in a DM — the Slack connector is
+  authenticated as Eddy, so an unscoped canvas lands in his personal space (that is where the
+  first run's canvas went).
+- **Post one short plain-text message in `#seo`** — headline finding, P1/P2 count, Linear IDs.
+  Let Slack auto-link any bare URL; **never hand-build a `<url|label>` link, and never put a
+  line break or extra text inside a URL** — that is exactly what produced the broken link last
+  run.
+- Write the rendered `report.html` (from `gleam_seo.render_html`) to the Drive folder
+  `Gleam SEO reports` as `SEO-<ISO week>.html` **only as a downloadable archive**, and say in
+  the message that it must be downloaded and opened in a browser to render (Drive's inline
+  viewer shows source, not the page). Do not present the Drive link as the way to "view" the
+  report — the canvas is.
+
+**DM heads-up to Eddy** — three lines: the single most important finding, the P1/P2 count, and
+"full report is the canvas in #seo". Not the report itself.
 
 **Linear** — one issue per priority-1 and priority-2 action, team Marketing, title
 `[SEO] <rule> — <keyword or page>`, the `where` as the first line of the description.
