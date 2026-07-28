@@ -210,9 +210,25 @@ Rules that avoid the failures already seen in testing:
 **DM heads-up to Eddy** — three lines: the single most important finding, the P1/P2 count, and
 "full report is the canvas in #seo". Not the report itself.
 
-**Linear** — one issue per priority-1 and priority-2 action, team Marketing, title
-`[SEO] <rule> — <keyword or page>`, the `where` as the first line of the description.
-De-duplicate on title: comment on an existing open issue rather than creating a second.
+**Linear** — one issue per priority-1 and priority-2 action, **team Marketing**. A task that
+only states a problem is a defect; every issue must be actionable on its own. Each issue MUST
+set:
+
+- **Title**: `[SEO] <rule> — <keyword or page>`.
+- **Assignee**: `eduardo@gleam.io` (the report owner) — never leave unassigned.
+- **Label**: `SEO` (add `CRO` as well for conversion-path items). Never leave label-less.
+- **Priority**: map the tier — **P1 → High (2)**, **P2 → Medium (3)**. Never leave at None.
+- **Description**, in this order, written so someone can act without opening the report:
+  1. **Recommendation — do this**: the concrete change(s) — what to write / build / redirect /
+     rebid — specific enough to start work. NOT a restatement of the finding.
+  2. **Where**: the exact URL, slug, or system (Rule 1).
+  3. **Why (evidence)**: the metric(s) that triggered it, with numbers and source
+     (Ahrefs / GSC / Google Ads).
+  4. **Expected impact**: rough upside (clicks or value) where derivable.
+  5. **Acceptance**: how we'll know it's done.
+
+De-duplicate on title: if an open issue with that title exists, comment on it instead of
+creating a second. See MAR-1509 for the required shape.
 
 **Do not write to Directus.** Content changes go to Linear for a human.
 
