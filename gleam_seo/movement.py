@@ -36,6 +36,7 @@ class QueryRow:
     impressions: float
     position: float
     ctr: Optional[float] = None  # GSC returns this; derived if absent
+    top_url: Optional[str] = None  # Ahrefs gsc-keywords returns this per keyword
 
     def resolved_ctr(self) -> Optional[float]:
         if self.ctr is not None:
@@ -63,6 +64,7 @@ class Mover:
     value_change: Optional[float] = None
     volume: Optional[float] = None
     cpc: Optional[float] = None
+    top_url: Optional[str] = None
     reasons: list[str] = field(default_factory=list)
 
 
@@ -212,6 +214,7 @@ def rank_movers(
                 value_change=value_change,
                 volume=volume,
                 cpc=cpc,
+                top_url=(now.top_url if now else (prev.top_url if prev else None)),
                 reasons=reasons,
             )
         )

@@ -96,13 +96,22 @@ Input shape (all sections optional except `gsc_keywords`):
 }
 ```
 
-`findings.json` gives you: `gsc_totals` (week-on-week clicks / impressions / avg position),
-the derived `ctr_curve`, ranked `movers` (each with track, position change, value change and
-the human-readable `reasons` it cleared threshold), `ctr_gaps`, `cannibalisation`, the
-aggregated `paid` block with its `lost_share_reading`, and `counts`. The driver already
-applies every threshold in the table below, ranks by estimated value change (`volume × CTR
-at position × CPC`, CTR curve derived from this week's own data), and drops excluded intent —
-so read the movers straight out; do not re-filter or re-rank.
+`findings.json` gives you all twelve report sections: `headline` (week-on-week clicks /
+impressions / avg position / organic revenue / brand spend / ROAS), the derived `ctr_curve`,
+the `value_chart` data, ranked `movers` / `movers_up` / `movers_down` (each with track,
+position change, value change and the human-readable `reasons` it cleared threshold),
+`priority_actions` (each already carrying a `where`), `brand_paid` with its
+`lost_share_reading`, `conquest`, `cannibalisation`, `ctr_gaps`, `informational`, the two GA4
+revenue sections, and `counts`. The driver already applies every threshold in the table below,
+ranks by estimated value change (`volume × CTR at position × CPC`, CTR curve derived from this
+week's own data), and drops excluded intent — so read the movers straight out; do not
+re-filter or re-rank.
+
+Then render the self-contained HTML report (all twelve sections + the diverging value chart):
+
+```bash
+python -m gleam_seo.render_html --findings findings.json --output report.html
+```
 
 For reference, the thresholds it enforces (`gleam_seo/thresholds.py`):
 

@@ -30,6 +30,8 @@ from gleam_seo.paid import (
     lost_share_reading,
     micros_to_units,
 )
+from gleam_seo.report import NOT_PULLED, MANUAL_FIELDS, build_report
+from gleam_seo.render_html import render
 
 __all__ = [
     "Track",
@@ -52,4 +54,8 @@ __all__ = [
     "fold_keyword",
     "lost_share_reading",
     "micros_to_units",
+    "NOT_PULLED",
+    "MANUAL_FIELDS",
+    "build_report",
+    "render",
 ]

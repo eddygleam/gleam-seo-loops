@@ -20,9 +20,16 @@ This repo fixes that by splitting the job in two:
 
 ```
 loops/
-  weekly-report.md              The Routine prompt to paste (repo attached). Delegates all
-                                arithmetic to the driver below.
+  weekly-report.md              Routine prompt (repo attached, full connector set). Pulls raw
+                                Google Ads keyword_view etc. into the driver.
+  weekly-report-ahrefs.md       Routine prompt for a session with Ahrefs + Drive + Slack +
+                                Linear but no GSC/Google Ads/GA4/Semrush connectors. Pulls
+                                GSC-equivalent data + volume/CPC from Ahrefs (project_id
+                                684395); Google Ads + GA4 come from a six-field manual block.
   weekly-report-v1-standalone.md  The original no-repo prompt, kept for reference / fallback.
+templates/
+  weekly-report.html            The canonical report: all twelve sections + the diverging
+                                value chart, self-contained (no external assets).
 gleam_seo/
   classify.py    Track classification: brand / commercial / informational / other / excluded (Rule 2).
   dates.py       GSC week ranges (7 days ending yesterday) and the GAQL BETWEEN clause.
@@ -32,8 +39,20 @@ gleam_seo/
   paid.py        Google Ads micros → currency, keyword folding, aggregation, rank- vs budget-lost reading.
   thresholds.py  Every movement / materiality / scope threshold, in one auditable place.
   report.py      Driver: snapshot JSON in → computed findings JSON out (`python -m gleam_seo.report`).
+  render_html.py Inject findings into templates/weekly-report.html (`python -m gleam_seo.render_html`).
 tests/           unittest-based tests for every module (also run under pytest).
 ```
+
+## Two Routine variants, one driver
+
+Both prompts feed the same `build_report` driver; they differ only in where the data comes
+from. The driver accepts either a `manual` block (six pre-aggregated Google Ads + GA4 fields —
+the Ahrefs variant) **or** a `paid` block of raw `keyword_view` rows it aggregates itself (the
+full-connector variant). `manual` wins if both are present, and it rejects any seventh field so
+it cannot silently grow. In the Ahrefs variant, GA4 revenue has no source, so those sections
+render `"not pulled this run"` — by design, per Rule 0. Ahrefs CPC is USD; the manual paid
+figures are A$; the report labels both, and the value-change ranking is unaffected by the FX
+gap because it is scale-invariant.
 
 ## The two design rules that shape everything
 

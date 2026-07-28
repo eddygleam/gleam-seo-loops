@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gleam.io weekly SEO report</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #14181f; --muted: #6b7480; --line: #e4e8ee;
+    --card: #f7f9fc; --accent: #7c3aed; --gain: #16a34a; --loss: #dc2626;
+    --pill: #eef1f6; --pillfg: #4b5563;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1319; --fg: #e6e9ef; --muted: #97a0ad; --line: #232a34;
+      --card: #161c24; --accent: #a78bfa; --gain: #4ade80; --loss: #f87171;
+      --pill: #202833; --pillfg: #aab3c0;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 32px 20px 80px; }
+  header.report { border-bottom: 1px solid var(--line); padding-bottom: 16px; margin-bottom: 8px; }
+  header.report h1 { font-size: 22px; margin: 0 0 4px; }
+  header.report .meta { color: var(--muted); font-size: 13px; }
+  section { border-top: 1px solid var(--line); padding: 22px 0; }
+  section:first-of-type { border-top: none; }
+  section > h2 { font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 14px; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 640px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+  .kpi .label { font-size: 12px; color: var(--muted); }
+  .kpi .value { font-size: 22px; font-weight: 650; margin-top: 4px; }
+  .kpi .delta { font-size: 12px; margin-top: 2px; }
+  .up { color: var(--gain); } .down { color: var(--loss); }
+  .pill { display: inline-block; background: var(--pill); color: var(--pillfg);
+    border-radius: 999px; padding: 1px 9px; font-size: 12px; }
+  .np { font-style: italic; color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .scroll { overflow-x: auto; }
+  ol.actions { margin: 0; padding-left: 20px; } ol.actions li { margin-bottom: 12px; }
+  ol.actions .where { color: var(--muted); font-size: 13px; }
+  ol.actions .rule { display: inline-block; background: var(--pill); color: var(--pillfg);
+    border-radius: 6px; padding: 0 7px; font-size: 11px; margin-right: 6px; text-transform: uppercase; letter-spacing: .04em; }
+  .empty { color: var(--muted); font-style: italic; }
+  /* diverging value chart */
+  .chart-row { display: grid; grid-template-columns: 200px 1fr; align-items: center; gap: 10px; margin: 3px 0; font-size: 13px; }
+  .chart-row .name { text-align: right; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .track-brand { border-left: 3px solid var(--accent); }
+  footer.report { margin-top: 40px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="report">
+    <h1>Gleam.io — weekly SEO report</h1>
+    <div class="meta" id="report-meta"></div>
+  </header>
+
+  <!-- All twelve sections are present in the markup regardless of data; the
+       script fills each body, or renders an empty / "not pulled this run"
+       state. Do not remove a section to produce a shorter report. -->
+  <section data-section="headline"><h2>1 · Headline numbers</h2><div class="kpis" id="s-headline"></div></section>
+  <section data-section="value-chart"><h2>2 · Movers by estimated value change</h2><div id="s-value-chart"></div></section>
+  <section data-section="movers-up"><h2>3 · Top movers up</h2><div class="scroll" id="s-movers-up"></div></section>
+  <section data-section="movers-down"><h2>4 · Top movers down</h2><div class="scroll" id="s-movers-down"></div></section>
+  <section data-section="priority-actions"><h2>5 · Priority actions</h2><div id="s-priority-actions"></div></section>
+  <section data-section="brand-paid"><h2>6 · Brand paid (Google Ads)</h2><div id="s-brand-paid"></div></section>
+  <section data-section="conquest"><h2>7 · Conquest / competitors campaign</h2><div id="s-conquest"></div></section>
+  <section data-section="cannibalisation"><h2>8 · Cannibalisation</h2><div class="scroll" id="s-cannibalisation"></div></section>
+  <section data-section="ctr-gaps"><h2>9 · CTR gaps</h2><div class="scroll" id="s-ctr-gaps"></div></section>
+  <section data-section="informational"><h2>10 · Informational queue</h2><div class="scroll" id="s-informational"></div></section>
+  <section data-section="ga4-organic-revenue"><h2>11 · Organic revenue by landing page (GA4)</h2><div id="s-ga4-organic-revenue"></div></section>
+  <section data-section="referral-revenue"><h2>12 · Referral revenue</h2><div id="s-referral-revenue"></div></section>
+
+  <footer class="report" id="report-footer"></footer>
+</div>
+
+<script id="report-data" type="application/json">
+/*__REPORT_DATA__*/
+</script>
+<script>
+(function () {
+  var NP = "not pulled this run";
+  var data;
+  try { data = JSON.parse(document.getElementById("report-data").textContent); }
+  catch (e) { data = {}; }
+
+  function isNP(v) { return v === NP || v === null || v === undefined; }
+  function np() { var s = document.createElement("span"); s.className = "np"; s.textContent = NP; return s; }
+  function fmt(v, opts) {
+    opts = opts || {};
+    if (isNP(v)) return NP;
+    if (typeof v !== "number") return String(v);
+    if (opts.pct) return (v * 100).toFixed(1) + "%";
+    if (opts.money) return (opts.cur || "$") + v.toLocaleString(undefined, {maximumFractionDigits: 2});
+    if (opts.pos) return v.toFixed(1);
+    return v.toLocaleString(undefined, {maximumFractionDigits: opts.dp == null ? 0 : opts.dp});
+  }
+  function el(tag, cls, txt) { var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function emptyMsg(host, msg) { var d = el("div", "empty", msg); host.appendChild(d); }
+
+  // meta + footer
+  var wr = data.week_ranges || {};
+  var tw = wr.this_week ? (wr.this_week[0] + " → " + wr.this_week[1]) : (data.generated_for || "");
+  document.getElementById("report-meta").textContent =
+    "This week " + tw + (wr.prior_week ? "  ·  prior " + wr.prior_week[0] + " → " + wr.prior_week[1] : "");
+  var c = data.counts || {};
+  document.getElementById("report-footer").textContent =
+    "run completed, " + (c.queries_checked || 0) + " queries checked, " + (c.findings || 0) + " findings"
+    + "  ·  CTR curve: " + (data.ctr_curve_source || "n/a")
+    + "  ·  organic value figures are indicative USD (Ahrefs), brand paid figures are A$.";
+
+  // 1 · headline
+  (function () {
+    var host = document.getElementById("s-headline");
+    var H = data.headline || {};
+    var defs = [
+      ["Organic clicks", H.organic_clicks, {}],
+      ["Organic impressions", H.organic_impressions, {}],
+      ["Avg position", H.avg_position, {pos: true, invert: true}],
+      ["Organic revenue", H.organic_revenue, {money: true}],
+      ["Brand paid spend", H.brand_paid_spend, {money: true, cur: "A$"}],
+      ["Brand ROAS", H.brand_roas, {dp: 2}]
+    ];
+    defs.forEach(function (d) {
+      var card = el("div", "kpi");
+      card.appendChild(el("div", "label", d[0]));
+      var wow = d[1];
+      var val = el("div", "value");
+      if (wow && typeof wow === "object" && "this_week" in wow) {
+        val.textContent = isNP(wow.this_week) ? NP : fmt(wow.this_week, d[2]);
+        if (isNP(wow.this_week)) val.className = "value np";
+        card.appendChild(val);
+        if (!isNP(wow.change)) {
+          var better = d[2].invert ? wow.change < 0 : wow.change > 0;
+          var delta = el("div", "delta " + (wow.change === 0 ? "" : (better ? "up" : "down")));
+          delta.textContent = (wow.change > 0 ? "+" : "") + fmt(wow.change, d[2]) + " WoW";
+          card.appendChild(delta);
+        }
+      } else {
+        if (isNP(wow)) { val.className = "value np"; val.textContent = NP; }
+        else val.textContent = fmt(wow, d[2]);
+        card.appendChild(val);
+      }
+      host.appendChild(card);
+    });
+  })();
+
+  // 2 · diverging value chart
+  (function () {
+    var host = document.getElementById("s-value-chart");
+    var rows = (data.value_chart || []).slice().sort(function (a, b) { return b.value_change - a.value_change; });
+    if (!rows.length) { emptyMsg(host, "No movers with a computable value change."); return; }
+    var max = 1;
+    rows.forEach(function (r) { max = Math.max(max, Math.abs(r.value_change)); });
+    rows.forEach(function (r) {
+      var row = el("div", "chart-row");
+      row.appendChild(el("div", "name" + (r.track === "brand" ? " track-brand" : ""), r.query));
+      var svgNS = "http://www.w3.org/2000/svg";
+      var svg = document.createElementNS(svgNS, "svg");
+      svg.setAttribute("viewBox", "0 0 200 18"); svg.setAttribute("width", "100%"); svg.setAttribute("height", "18");
+      var mid = 100, half = Math.abs(r.value_change) / max * 96;
+      var axis = document.createElementNS(svgNS, "line");
+      axis.setAttribute("x1", mid); axis.setAttribute("x2", mid); axis.setAttribute("y1", 0); axis.setAttribute("y2", 18);
+      axis.setAttribute("stroke", "var(--line)"); svg.appendChild(axis);
+      var bar = document.createElementNS(svgNS, "rect");
+      var gain = r.value_change >= 0;
+      bar.setAttribute("x", gain ? mid : mid - half); bar.setAttribute("y", 4);
+      bar.setAttribute("width", Math.max(1, half)); bar.setAttribute("height", 10);
+      bar.setAttribute("rx", 2); bar.setAttribute("fill", gain ? "var(--gain)" : "var(--loss)");
+      svg.appendChild(bar);
+      var lbl = document.createElementNS(svgNS, "text");
+      lbl.setAttribute("x", gain ? Math.min(198, mid + half + 3) : Math.max(2, mid - half - 3));
+      lbl.setAttribute("y", 13); lbl.setAttribute("font-size", "9");
+      lbl.setAttribute("text-anchor", gain ? "start" : "end"); lbl.setAttribute("fill", "var(--muted)");
+      lbl.textContent = (r.value_change >= 0 ? "+" : "") + Math.round(r.value_change).toLocaleString();
+      svg.appendChild(lbl);
+      row.appendChild(svg);
+      host.appendChild(row);
+    });
+  })();
+
+  function moversTable(host, rows) {
+    if (!rows || !rows.length) { emptyMsg(host, "None past threshold."); return; }
+    var t = el("table");
+    var head = el("tr");
+    ["Query", "Track", "Pos (was)", "Δpos", "ΔClicks", "ΔValue", "Why"].forEach(function (h, i) {
+      var th = el("th", i >= 2 && i <= 5 ? "num" : null, h); head.appendChild(th);
+    });
+    t.appendChild(head);
+    rows.forEach(function (m) {
+      var tr = el("tr");
+      tr.appendChild(el("td", null, m.query));
+      tr.appendChild(el("td", null, m.track));
+      tr.appendChild(el("td", "num", isNP(m.pos_now) ? "—" : (fmt(m.pos_now, {pos: 1}) + " (" + (isNP(m.pos_prev) ? "new" : fmt(m.pos_prev, {pos: 1})) + ")")));
+      tr.appendChild(el("td", "num", isNP(m.pos_change) ? "—" : fmt(m.pos_change, {pos: 1})));
+      tr.appendChild(el("td", "num", fmt(m.clicks_change)));
+      tr.appendChild(el("td", "num", isNP(m.value_change) ? "—" : (m.value_change >= 0 ? "+" : "") + Math.round(m.value_change).toLocaleString()));
+      tr.appendChild(el("td", null, (m.reasons || []).join("; ")));
+      t.appendChild(tr);
+    });
+    host.appendChild(t);
+  }
+  moversTable(document.getElementById("s-movers-up"), data.movers_up);
+  moversTable(document.getElementById("s-movers-down"), data.movers_down);
+
+  // 5 · priority actions
+  (function () {
+    var host = document.getElementById("s-priority-actions");
+    var acts = data.priority_actions || [];
+    if (!acts.length) { emptyMsg(host, "No commercial movement past threshold. Informational items, if any, are in section 10."); return; }
+    var ol = el("ol", "actions");
+    acts.forEach(function (a) {
+      var li = el("li");
+      li.appendChild(el("span", "rule", a.rule || "SEO"));
+      li.appendChild(document.createTextNode(a.what || ""));
+      var w = el("div", "where"); w.textContent = "where: " + (a.where || NP); li.appendChild(w);
+      ol.appendChild(li);
+    });
+    host.appendChild(ol);
+  })();
+
+  // 6 · brand paid
+  (function () {
+    var host = document.getElementById("s-brand-paid");
+    var b = data.brand_paid || {};
+    var t = el("table");
+    [["Spend", fmt(b.spend, {money: true, cur: "A$"})],
+     ["Conversions", isNP(b.conversions) ? NP : fmt(b.conversions)],
+     ["CPA", isNP(b.cpa) ? NP : fmt(b.cpa, {money: true, cur: "A$"})],
+     ["ROAS", isNP(b.roas) ? NP : fmt(b.roas, {dp: 2})],
+     ["Rank-lost impression share", isNP(b.rank_lost_is) ? NP : fmt(normShare(b.rank_lost_is), {pct: true})],
+     ["Budget-lost impression share", isNP(b.budget_lost_is) ? NP : fmt(normShare(b.budget_lost_is), {pct: true})]
+    ].forEach(function (r) {
+      var tr = el("tr");
+      tr.appendChild(el("th", null, r[0]));
+      var td = el("td", "num");
+      if (r[1] === NP) td.appendChild(np()); else td.textContent = r[1];
+      tr.appendChild(td); t.appendChild(tr);
+    });
+    host.appendChild(t);
+    var read = el("p"); read.style.marginTop = "12px";
+    if (isNP(b.lost_share_reading)) read.appendChild(np()); else read.textContent = b.lost_share_reading;
+    host.appendChild(read);
+  })();
+  function normShare(v) { return typeof v === "number" && v > 1 ? v / 100 : v; }
+
+  // 7 · conquest
+  (function () {
+    var host = document.getElementById("s-conquest");
+    var q = data.conquest || {};
+    var p = el("p");
+    if (isNP(q.cpa)) { p.appendChild(document.createTextNode("Conquest CPA: ")); p.appendChild(np()); }
+    else { p.textContent = "Conquest CPA: A$" + q.cpa + (isNP(q.vs_brand) ? "" : " (" + q.vs_brand + ")"); }
+    host.appendChild(p);
+  })();
+
+  // 8 · cannibalisation
+  (function () {
+    var host = document.getElementById("s-cannibalisation");
+    var v = data.cannibalisation;
+    if (isNP(v)) { host.appendChild(np()); return; }
+    if (!v.length) { emptyMsg(host, "No queries changed ranking page."); return; }
+    var t = el("table"); var head = el("tr");
+    ["Query", "Was", "Now"].forEach(function (h) { head.appendChild(el("th", null, h)); }); t.appendChild(head);
+    v.forEach(function (r) { var tr = el("tr");
+      tr.appendChild(el("td", null, r.query)); tr.appendChild(el("td", null, r.page_prev)); tr.appendChild(el("td", null, r.page_now)); t.appendChild(tr); });
+    host.appendChild(t);
+  })();
+
+  // 9 · ctr gaps
+  (function () {
+    var host = document.getElementById("s-ctr-gaps");
+    var v = data.ctr_gaps || [];
+    if (!v.length) { emptyMsg(host, "No CTR gaps past threshold."); return; }
+    var t = el("table"); var head = el("tr");
+    ["Query", "Impr.", "Pos", "CTR", "Benchmark", "Deficit"].forEach(function (h, i) { head.appendChild(el("th", i ? "num" : null, h)); });
+    t.appendChild(head);
+    v.forEach(function (g) { var tr = el("tr");
+      tr.appendChild(el("td", null, g.query));
+      tr.appendChild(el("td", "num", fmt(g.impressions)));
+      tr.appendChild(el("td", "num", fmt(g.position, {pos: 1})));
+      tr.appendChild(el("td", "num", fmt(g.actual_ctr, {pct: true})));
+      tr.appendChild(el("td", "num", fmt(g.expected_ctr, {pct: true})));
+      tr.appendChild(el("td", "num", fmt(g.deficit, {pct: true})));
+      t.appendChild(tr); });
+    host.appendChild(t);
+  })();
+
+  // 10 · informational
+  (function () {
+    var host = document.getElementById("s-informational");
+    var v = data.informational || [];
+    if (!v.length) { emptyMsg(host, "No informational items past threshold."); return; }
+    var t = el("table"); var head = el("tr");
+    ["Query", "Impr.", "Pos (was)", "Why"].forEach(function (h, i) { head.appendChild(el("th", i >= 1 && i <= 2 ? "num" : null, h)); });
+    t.appendChild(head);
+    v.forEach(function (m) { var tr = el("tr");
+      tr.appendChild(el("td", null, m.query));
+      tr.appendChild(el("td", "num", fmt(m.impressions_now)));
+      tr.appendChild(el("td", "num", (isNP(m.pos_now) ? "—" : fmt(m.pos_now, {pos: 1})) + " (" + (isNP(m.pos_prev) ? "new" : fmt(m.pos_prev, {pos: 1})) + ")"));
+      tr.appendChild(el("td", null, (m.reasons || []).join("; ")));
+      t.appendChild(tr); });
+    host.appendChild(t);
+  })();
+
+  // 11 & 12 · GA4 sections (no connector, no manual field)
+  (function () {
+    [["s-ga4-organic-revenue", data.ga4_organic_revenue],
+     ["s-referral-revenue", data.referral_revenue]].forEach(function (pair) {
+      var host = document.getElementById(pair[0]);
+      if (isNP(pair[1])) { host.appendChild(np()); }
+    });
+  })();
+})();
+</script>
+</body>
+</html>

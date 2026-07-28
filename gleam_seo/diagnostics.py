@@ -36,6 +36,7 @@ class CtrGap:
     actual_ctr: float
     expected_ctr: float
     deficit: float  # fractional shortfall vs expected, in [0, 1]
+    top_url: Optional[str] = None  # the page to edit, when the source supplies it
 
 
 def _top_page(rows: Iterable[QueryPageRow]) -> dict[str, str]:
@@ -110,6 +111,7 @@ def ctr_gaps(
                     actual_ctr=actual,
                     expected_ctr=expected,
                     deficit=deficit,
+                    top_url=getattr(row, "top_url", None),
                 )
             )
     out.sort(key=lambda g: (-g.deficit, -g.impressions))
