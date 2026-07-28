@@ -12,12 +12,12 @@ def _payload():
         "today": "2026-07-28",
         "meta": {"units": {"ahrefs": 1840, "semrush": 0}},
         "manual": {
-            "brand_spend": 4700.0,
+            "brand_spend_aud": 4700.0,
             "brand_conversions": 112,
             "brand_roas": 0.92,
-            "brand_rank_lost_is": 0.452,
-            "brand_budget_lost_is": 0.033,
-            "conquest_cpa": 244.35,
+            "brand_rank_lost_is_pct": 45.2,
+            "brand_budget_lost_is_pct": 3.3,
+            "conquest_cpa_aud": 244.35,
         },
         "ctr_by_position": [
             {"position": 1, "average_ctr_percent": 30.0},
@@ -136,13 +136,13 @@ class TestNarrativeMerge(unittest.TestCase):
 
 class TestManualGuard(unittest.TestCase):
     def test_unexpected_manual_field_rejected(self):
-        payload = {"today": "2026-07-28", "manual": {"brand_spend": 1, "ga4_revenue": 9},
+        payload = {"today": "2026-07-28", "manual": {"brand_spend_aud": 1, "ga4_revenue": 9},
                    "gsc_keywords": {"this_week": [], "prior_week": []}}
         with self.assertRaises(ValueError):
             build_report(payload)
 
     def test_missing_manual_fields_render_not_pulled(self):
-        payload = {"today": "2026-07-28", "manual": {"brand_spend": 4700.0},
+        payload = {"today": "2026-07-28", "manual": {"brand_spend_aud": 4700.0},
                    "gsc_keywords": {"this_week": [], "prior_week": []}}
         r = build_report(payload)
         vals = {k["k"]: k["v"] for k in r["brand"]["kpis"]}

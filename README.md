@@ -22,10 +22,11 @@ This repo fixes that by splitting the job in two:
 loops/
   weekly-report.md              Routine prompt (repo attached, full connector set). Pulls raw
                                 Google Ads keyword_view etc. into the driver.
-  weekly-report-ahrefs.md       Routine prompt for a session with Ahrefs + Drive + Slack +
-                                Linear but no GSC/Google Ads/GA4/Semrush connectors. Pulls
-                                GSC-equivalent data + volume/CPC from Ahrefs (project_id
-                                684395); Google Ads + GA4 come from a six-field manual block.
+  weekly-report-ahrefs.md       Routine prompt (v2, canonical) for a session with Ahrefs +
+                                Drive + Slack + Linear but no GSC/Google Ads/GA4/Semrush
+                                connectors. Pulls GSC-equivalent data + volume/CPC from Ahrefs
+                                (project_id 684395); Google Ads paid comes from a six-field
+                                manual block; GA4 revenue has no source and renders "not pulled".
   weekly-report-v1-standalone.md  The original no-repo prompt, kept for reference / fallback.
 templates/
   weekly-report.html            The canonical report: twelve numbered sections + the diverging
@@ -48,10 +49,12 @@ tests/           unittest-based tests for every module (also run under pytest).
 ## Two Routine variants, one driver
 
 Both prompts feed the same `build_report` driver; they differ only in where the data comes
-from. The driver accepts either a `manual` block (six pre-aggregated Google Ads + GA4 fields —
-the Ahrefs variant) **or** a `paid` block of raw `keyword_view` rows it aggregates itself (the
-full-connector variant). `manual` wins if both are present, and it rejects any seventh field so
-it cannot silently grow. In the Ahrefs variant, GA4 revenue has no source, so those sections
+from. The driver accepts either a `manual` block (six pre-aggregated Google Ads paid fields —
+`brand_spend_aud`, `brand_conversions`, `brand_roas`, `brand_rank_lost_is_pct`,
+`brand_budget_lost_is_pct`, `conquest_cpa_aud` — the Ahrefs variant) **or** a `paid` block of
+raw `keyword_view` rows it aggregates itself (the full-connector variant). `manual` wins if both
+are present, and it rejects any seventh field so it cannot silently grow. GA4 revenue and
+referral revenue (sections 05–06) have no source in either connector-light session, so they
 render `"not pulled this run"` — by design, per Rule 0. Ahrefs CPC is USD; the manual paid
 figures are A$; the report labels both, and the value-change ranking is unaffected by the FX
 gap because it is scale-invariant.

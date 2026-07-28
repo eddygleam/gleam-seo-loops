@@ -18,9 +18,9 @@ Snapshot shape (all optional except ``gsc_keywords``)::
       "today": "2026-07-28",
       "meta":  {"week": "...", "period": "...", "generated": "...",
                 "units": {"ahrefs": 1840, "semrush": 0}},
-      "manual": {                       # Google Ads + GA4, exactly six fields
-        "brand_spend", "brand_conversions", "brand_roas",
-        "brand_rank_lost_is", "brand_budget_lost_is", "conquest_cpa"
+      "manual": {                       # Google Ads paid, exactly six fields
+        "brand_spend_aud", "brand_conversions", "brand_roas",
+        "brand_rank_lost_is_pct", "brand_budget_lost_is_pct", "conquest_cpa_aud"
       },
       "gsc_keywords":   {"this_week": [row, ...], "prior_week": [row, ...]},
       "ctr_by_position":[{"position": 1, "average_ctr_percent": 30.1}, ...],
@@ -51,13 +51,16 @@ from gleam_seo.paid import aggregate_keywords, lost_share_reading
 
 NOT_PULLED = "not pulled this run"
 
+# Exactly the six fields of the human-pasted YYYY-MM-DD-manual.json (see the
+# Ahrefs-backed Routine prompt, Step 4). Names and units are part of the
+# contract: *_aud = AUD, *_pct = a percentage (e.g. 45.2, not 0.452).
 MANUAL_FIELDS = (
-    "brand_spend",
+    "brand_spend_aud",
     "brand_conversions",
     "brand_roas",
-    "brand_rank_lost_is",
-    "brand_budget_lost_is",
-    "conquest_cpa",
+    "brand_rank_lost_is_pct",
+    "brand_budget_lost_is_pct",
+    "conquest_cpa_aud",
 )
 
 
@@ -110,12 +113,12 @@ def _brand_paid_source(payload: dict) -> dict[str, Any]:
         spend = round(sum(a.cost for a in aggregates), 2) if aggregates else NOT_PULLED
         conversions = sum(a.conversions for a in aggregates) if aggregates else NOT_PULLED
         return {
-            "brand_spend": spend,
+            "brand_spend_aud": spend,
             "brand_conversions": conversions,
             "brand_roas": paid["roas"] if paid.get("roas") is not None else NOT_PULLED,
-            "brand_rank_lost_is": paid["rank_lost"] if paid.get("rank_lost") is not None else NOT_PULLED,
-            "brand_budget_lost_is": paid["budget_lost"] if paid.get("budget_lost") is not None else NOT_PULLED,
-            "conquest_cpa": paid["conquest_cpa"] if paid.get("conquest_cpa") is not None else NOT_PULLED,
+            "brand_rank_lost_is_pct": paid["rank_lost"] if paid.get("rank_lost") is not None else NOT_PULLED,
+            "brand_budget_lost_is_pct": paid["budget_lost"] if paid.get("budget_lost") is not None else NOT_PULLED,
+            "conquest_cpa_aud": paid["conquest_cpa"] if paid.get("conquest_cpa") is not None else NOT_PULLED,
         }
 
     return {f: NOT_PULLED for f in MANUAL_FIELDS}
@@ -186,9 +189,9 @@ def _lost_row(m, meta: dict, cannib_keys: set) -> dict:
 
 
 def _brand_kpis(manual: dict) -> list[dict]:
-    rank, budget = manual["brand_rank_lost_is"], manual["brand_budget_lost_is"]
-    roas, spend = manual["brand_roas"], manual["brand_spend"]
-    conquest = manual["conquest_cpa"]
+    rank, budget = manual["brand_rank_lost_is_pct"], manual["brand_budget_lost_is_pct"]
+    roas, spend = manual["brand_roas"], manual["brand_spend_aud"]
+    conquest = manual["conquest_cpa_aud"]
     cpa = _derived_cpa(spend, manual["brand_conversions"])
     kpis: list[dict] = []
 
@@ -338,10 +341,10 @@ def build_report(payload: dict) -> dict:
     } for m in movers if m.track.value == "informational"]
 
     brand_kpis = _brand_kpis(manual)
-    cpa = _derived_cpa(manual["brand_spend"], manual["brand_conversions"])
-    if isinstance(manual["brand_spend"], (int, float)) and cpa is not None:
+    cpa = _derived_cpa(manual["brand_spend_aud"], manual["brand_conversions"])
+    if isinstance(manual["brand_spend_aud"], (int, float)) and cpa is not None:
         paidsrc = (f"Brand total (manual block, Google Ads 9047806202): "
-                   f"A${manual['brand_spend']:,.2f} spend, CPA A${cpa:,.2f}, "
+                   f"A${manual['brand_spend_aud']:,.2f} spend, CPA A${cpa:,.2f}, "
                    f"ROAS {manual['brand_roas'] if isinstance(manual['brand_roas'], (int, float)) else NOT_PULLED}.")
     else:
         paidsrc = "Per-keyword brand paid detail " + NOT_PULLED + " (six-field manual block only)."

@@ -1,166 +1,183 @@
-# Gleam.io weekly SEO report — Ahrefs variant (repo attached)
+# Gleam.io weekly SEO report — Routine prompt (Ahrefs-backed, v2)
 
-Use this variant when the session has **Ahrefs, Google Drive, Slack and Linear** but **no
-direct Google Search Console, Google Ads, GA4 or Semrush connectors** — which is the current
-setup. It pulls GSC‑equivalent data and keyword volume/CPC from **Ahrefs**, and takes the
-Google Ads + GA4 numbers from a small **manual block** a human fills in at the top of the
-snapshot. All arithmetic is done by the tested code in `gleam_seo/`; you pull and you write,
-you do not compute.
+Paste everything below the line into the prompt field of a weekly Routine.
 
-Connectors this variant needs: **Ahrefs, Google Drive, Slack, Linear.**
-
-Two things about Ahrefs' GSC integration, confirmed for this account:
-
-- The gleam.io Search Console property is linked to Ahrefs **project_id `684395`** ("Gleam.io
-  Main", verified, subdomains). **Use `project_id: 684395` for every `gsc-*` call.**
-- `gsc-ctr-by-position` returns live own‑data at **0 API units** — use it for the CTR curve.
-
-Currency note, because it matters and must be labelled honestly: Ahrefs reports **CPC in USD
-cents**. The driver converts it to dollars but cannot convert USD→AUD (there is no FX source,
-and the manual block is capped at six fields). So **organic value figures are indicative USD**;
-**brand paid figures in the manual block are the real A$** from Google Ads. The report labels
-both. The value‑change *ranking* is unaffected by the FX gap (it is scale‑invariant).
+Connectors required — all four are already present in the cloud session:
+**Ahrefs, Google Drive, Slack, Linear.** No Search Console, Google Ads, GA4 or Semrush
+connector is needed; this version does not use them.
 
 ---
 
-You are producing the weekly SEO report for gleam.io. Work through every step. Be terse in
-chat; the deliverable is the HTML report, the Slack canvas and the Linear issues.
+You are producing the weekly SEO report for gleam.io. Deliver it as a Slack canvas plus a
+direct message to Eddy, and open Linear issues for the priority actions. Be terse in the
+session itself; the deliverable is the canvas, not commentary.
 
 ## Rule 0 — never report a number you did not pull
 
-The driver enforces this: any manual field you leave unset renders as `"not pulled this run"`,
-and value fields stay `null` when volume or CPC is missing. Do not fill those in. In this
-variant GA4 revenue has **no** source at all, so sections 11 and 12 and the "organic revenue"
-headline will read `"not pulled this run"` every week until a GA4 connector or field exists —
-that is correct, not a failure.
+If a value was not returned by a tool call in this run, write "not pulled this run". Do not
+estimate it, do not carry a previous week's figure forward as current, do not reason toward a
+number that seems plausible. If a pull fails, name the failure in the method section and leave
+that section empty. An empty section is information; a confident guess is a liability.
 
-The two competitor/SERP traps from the original still apply: quote competitor ad text, never
-infer it; and never claim Gleam is absent from a SERP without checking (Gleam ranks #8 for
-"gleam alternative" via /blog/comparisons/).
+Two traps that have already produced wrong output in this project:
+
+- **Never claim what a competitor's ad says** unless you are quoting ad text returned by an
+  API. Never allege trademark misuse on inference. A previous draft accused two companies of
+  trademark violation with no evidence; the data contradicted it.
+- **Never assert Gleam is absent from a SERP without checking.** Gleam ranks #8 for
+  "gleam alternative" via /blog/comparisons/. Check before recommending a new page.
 
 ## Rule 1 — every recommendation carries a location
 
-The driver seeds each priority action with a `where` (the `top_url` Ahrefs attaches to the
-query, or the GSC query itself). Keep it when you refine wording. An item without a `where`
-does not ship.
+Each action item has two parts: what to do, and **where** — an exact URL, a proposed new
+slug, or a system such as "Google Ads → Gleam - Brand campaign". No `where`, no ship.
 
-## Rule 2 — three tracks, never mixed
+## Rule 2 — three tracks, never mixed in one average
 
-Classification is done by `gleam_seo.classify`. Brand = contains "gleam"; commercial =
-tool/software/platform/app/…/alternative(conquest)/action phrasings; informational =
-ideas/examples/how‑to/rules/legal; excluded = software giveaway(s)/free software/giveaway of
-the day/steam key/nft giveaway/crypto giveaway.
+- **Brand** — anything containing "gleam". Scored on position and SERP ownership. `gleam`
+  alone is ~10,000 weekly impressions and would swamp any average it sits inside.
+- **Commercial** — software, platform, app, tool, picker, generator, maker, websites, plus
+  action phrasings (run a / host a / create a). Scored on estimated traffic value.
+- **Informational** — ideas, examples, how to, rules, legal. Scored on impressions.
 
-## The manual block — Google Ads + GA4, exactly six fields
+Terms containing "gleam" are brand, not conquest. "rafflecopter alternative" is conquest;
+"gleam alternative" is brand defence — different owner, different action.
 
-At the **top** of the snapshot JSON, before any Ahrefs data, put a `manual` block with
-**exactly** these six fields. Fill what you have from Google Ads (account 9047806202, AUD);
-leave anything you cannot get out — the driver renders it as "not pulled this run", and it
-**rejects any seventh field** so the block cannot quietly grow:
+Exclude as irrelevant intent: software giveaway, software giveaways, free software, giveaway
+of the day, steam key, nft giveaway, crypto giveaway.
+
+## Step 1 — Ahrefs, Search Console data
+
+**Use `project_id: 684395`** — "Gleam.io Main", verified, subdomains mode. Confirmed to have
+Search Console linked and returning live data at zero API unit cost.
+
+Pull, for the 7 days ending yesterday:
+
+- `gsc-keywords` — queries with clicks, impressions, CTR, position
+- `gsc-pages` — pages with the same
+- `gsc-ctr-by-position` — the own-data CTR benchmark curve. Use this rather than deriving your
+  own; it is built from 100+ keywords per position, where a hand-rolled curve from a small
+  sample produces nonsense at the tail.
+- `gsc-positions-history` and `gsc-page-history` — for trend context
+
+Note: project 684395 is *subdomains* mode while the raw GSC property is URL-prefix
+`https://gleam.io/`. They cover slightly different URL sets. Use Ahrefs consistently; do not
+mix the two sources within one report.
+
+## Step 2 — read last week's snapshot from Drive, then diff
+
+Read the most recent files in the Google Drive folder `Gleam SEO snapshots`. Compare this
+week's pull against them: position now, position then, change, clicks change, track.
+
+If no prior snapshot exists, say "building history — week 1 of 4" in the movers sections
+rather than leaving them blank without explanation.
+
+Report a query only if it clears **both** tests:
+
+| Track | Movement | Materiality |
+|---|---|---|
+| Brand | any change ≥1 position, or sitting worse than position 3 with no movement | ≥20 impressions |
+| Commercial | ≥3 positions, or left top 10, or lost position 1 | ≥40 impressions |
+| Informational | ≥5 positions | ≥250 impressions |
+
+Ignore worse than position 20 unless CPC is above A$6.
+
+Rank movers by **estimated value change**: `volume × CTR at position × CPC`, using the Ahrefs
+CTR curve from step 1. Position 47→29 is dramatic and worth nothing; a top-3 term slipping two
+places on an A$11 CPC matters.
+
+Also flag:
+
+- **Cannibalisation** — any query whose ranking page changed between snapshots.
+- **CTR gap** — any query with 250+ impressions whose CTR is more than 40% below the Ahrefs
+  benchmark for its position. Verify `gleam app` specifically: it drew ~1,180 impressions at
+  1.6% CTR from position 3.4, far below benchmark, and is corroborated by zero paid
+  conversions on the same term.
+
+## Step 3 — Ahrefs, volume and CPC
+
+`keywords-explorer-overview` and `site-explorer-organic-keywords` for the keywords that
+surfaced in step 2 only, not the whole set. This replaces Semrush entirely — and is an
+improvement, since Semrush position data was found to contradict Search Console materially.
+
+Also pull `site-explorer-organic-competitors`, `serp-overview` for the top movers and brand
+modifier terms, and `site-audit-issues` filtered to commercial URLs.
+
+## Step 4 — paid figures, manual
+
+There is no Google Ads or GA4 connector. These six fields are pasted into the snapshot JSON by
+a human before the run. Read them from the most recent snapshot file in Drive named
+`YYYY-MM-DD-manual.json`:
 
 ```json
 {
-  "manual": {
-    "brand_spend":          4700.0,   // A$, brand campaign, last 7 days
-    "brand_conversions":    112,
-    "brand_roas":           0.92,
-    "brand_rank_lost_is":   0.452,    // search_rank_lost_impression_share (fraction or %)
-    "brand_budget_lost_is": 0.033,    // search_budget_lost_impression_share
-    "conquest_cpa":         244.35    // A$, competitors campaign
-  }
+  "brand_spend_aud": null,
+  "brand_conversions": null,
+  "brand_roas": null,
+  "brand_rank_lost_is_pct": null,
+  "brand_budget_lost_is_pct": null,
+  "conquest_cpa_aud": null
 }
 ```
 
-Baselines from 2026-07-28 to sanity‑check against (suspect the pull, not the baseline, if they
-disagree without cause): brand CPA A$41.69, ROAS 0.92; conquest CPA A$244.35 (≈5.9× brand);
-rank‑lost 45.2% vs budget‑lost 3.3%.
+Any field left `null` renders as "not pulled this run". Do not infer or carry forward.
 
-## Step 1 — Ahrefs GSC pulls (project_id 684395)
+Baselines from 2026-07-28 for sanity-checking: brand spend A$4,700, CPA A$41.69, ROAS 0.92,
+rank-lost 45.2%, budget-lost 3.3%, conquest CPA A$244.35. If pasted figures contradict these
+without obvious cause, flag it rather than reporting it silently.
 
-Use `gleam_seo.dates.week_ranges(today)` for the bounds. For each week call:
+The rank-lost versus budget-lost distinction is the single most valuable number in this
+report: rank-lost means outranked, budget-lost means out of money, and they need opposite
+responses. Say so whenever it is present.
 
-- `mcp__Ahrefs__gsc-keywords` — `{project_id: 684395, date_from, date_to, limit: 250}`. Returns
-  per keyword: `clicks, impressions, position, ctr, top_url`. **Keep `top_url`** — it is what
-  the driver uses to detect cannibalisation, so no separate query+page pull is needed.
-- `mcp__Ahrefs__gsc-pages` — `{project_id: 684395, date_from, date_to, limit: 100}` for the
-  page‑level view.
-- `mcp__Ahrefs__gsc-ctr-by-position` — `{project_id: 684395, date_from, date_to}` (0 units).
-  Returns `[{position, average_ctr_percent, keyword_count}]`.
+## Step 5 — build the report, all 12 sections
 
-Map each `gsc-keywords` row to `{query: <keyword>, clicks, impressions, position, top_url}`
-(drop `ctr`; the driver derives it from clicks/impressions to avoid unit ambiguity). Put the
-ctr‑by‑position rows into the snapshot's `ctr_by_position` field verbatim.
+Reproduce the structure of `templates/weekly-report.html` **exactly** — all twelve sections,
+including the diverging value-change chart in section 02. Do not produce a shortened version;
+a previous run emitted an 8-section variant and it was rejected.
 
-## Step 2 — keyword volume & CPC from Ahrefs (replaces Semrush)
+The sections are: 01 scorecard · 02 what moved (diverging value chart) · 03 movers with
+diagnosis · 04 flags, cannibalisation and CTR gap · 05 revenue · 06 referral revenue ·
+07 brand · 08 competition · 09 AI search · 10 where to make changes · 11 informational track ·
+12 method and run log.
 
-For the top three movers and any brand‑modifier term, call
-`mcp__Ahrefs__keywords-explorer-overview` with `{select: "keyword,volume,cpc", country: "AU",
-keywords: "<comma list>"}`. `cpc` is **USD cents** — divide by 100 to dollars. Put results in
-the snapshot's `keyword_metrics` block, keyed by the (normalised) query:
+Sections 05 and 06 have no data source in this configuration. Render them with a clear
+"not pulled this run — requires GA4" note rather than omitting them, so the structure stays
+stable week to week.
 
-```json
-"keyword_metrics": { "giveaway tool": { "volume": 5000, "cpc": 11.0 } }
-```
+Build the action queue from the rules: on-page for commercial positions 4–8, internal links
+for 9–15, consolidate on cannibalisation, metadata rewrite on CTR gap, brand defence for any
+brand term worse than position 3, and new-page briefs for commercial terms with no ranking.
+Every item carries its `where`.
 
-The driver only ever reads volume and CPC from here; **position always comes from the GSC
-rows**, never from Ahrefs' organic position (they disagree, and GSC wins).
+## Step 6 — snapshot to Drive
 
-## Step 3 — assemble the snapshot, run the driver, render
+Write this run's pulls to Google Drive folder `Gleam SEO snapshots` as
+`YYYY-MM-DD-<kind>.json` for kinds `gsc_keywords`, `gsc_pages`, `ctr_curve`, `movers`. Next
+week's diff depends on this; skip it and every week looks like week one.
 
-The report is `templates/weekly-report.html` — a fixed template carrying one `REPORT` object
-between `/* @@REPORT_DATA_START@@ */` and `/* @@REPORT_DATA_END@@ */`, and a fixed JS renderer
-below it. The loop replaces only that object each run; **never touch the renderer**.
+## Step 7 — deliver
 
-```bash
-python -m gleam_seo.report      --input snapshot.json --output report.json
-python -m gleam_seo.render_html --report report.json  --output report.html
-```
+**Slack canvas** — create a canvas titled `SEO — <ISO week>` containing: six headline numbers
+with week-on-week change; top three movers up and down with value change; the priority actions
+each with its `where`; brand position summary.
 
-`build_report` splits the twelve sections into two:
+**Slack direct message to Eddy** — send him a DM, not a channel post. One short message: the
+single most important finding, the count of priority items, and a link to the canvas. Three
+lines maximum.
 
-- **Computed by the tested code — do not hand‑write these.** `diverge` (the signature value strip),
-  `gained` / `lost` (with cannibalisation vs ranking diagnosis), `cannib`, `ctrgap`, the `info`
-  rows, the brand KPI trio (rank‑lost share, CPA vs conquest, ROAS — from the manual block), the
-  seeded `queue`, `status`, `week` / `period`, `findings` / `priority1`.
-- **Authored by you, passed in `narrative`.** The prose and other‑source sections the diff can't
-  produce: the scorecard `kpis` + `kpisrc`, `sov`, `displace`, `newpages`, `ai`, the per‑keyword
-  brand `paid` table + `serp` + `attack` + `note` + `datagap`, `rev`, `ref`, per‑page `info`
-  verdicts, `method`, and `units`. Put them under `"narrative": { ... }` in the snapshot; the
-  driver merges them over safe defaults, so anything you omit renders empty or "not pulled this
-  run" rather than breaking the template.
-
-The twelve sections (template order): 01 scorecard, 02 what moved (diverging strip), 03 movers
-(gained/lost), 04 flags (cannibalisation + CTR gaps), 05 revenue, 06 referral revenue, 07 brand,
-08 competition, 09 AI search, 10 action queue, 11 informational, 12 method. **In this variant,
-05 revenue and 06 referral revenue have no GA4 source, so leave their `narrative` out and they
-read "not pulled this run".** Never delete a section to shorten the report.
-
-## Step 4 — snapshot to Drive
-
-Write the run's raw pulls to Google Drive as JSON in folder `Gleam SEO snapshots`, named
-`YYYY-MM-DD-<kind>.json` for kinds `gsc_keywords`, `gsc_pages`, `ctr_by_position`,
-`keyword_metrics`, `manual`, and the computed `report` (the REPORT object). Also write
-`report.html`. Next week's run reads the prior `gsc_keywords` snapshot as `prior_week` instead of
-a second live pull.
-
-## Step 5 — output
-
-**Slack** — create a canvas in `#seo` titled `SEO — <ISO week>` reproducing the sections from
-`report.json` (the scorecard; the value‑change movers; gained/lost; the flags — cannibalisation
-and CTR gaps; the action queue each item with its `where`; and the brand rank‑lost reading).
-Attach or link `report.html`. Then post a short message linking the canvas: headline finding,
-count of priority items, nothing else. The GA4 revenue and referral sections show "not pulled
-this run" in this variant — say so rather than omitting them.
-
-**Linear** — one issue per priority action, team Marketing, title `[SEO] <rule> — <keyword or
-page>`, first description line is the `where`. Do not duplicate open issues; comment instead.
+**Linear** — one issue per priority-1 and priority-2 action, team Marketing, title
+`[SEO] <rule> — <keyword or page>`, the `where` as the first line of the description.
+De-duplicate on title: comment on an existing open issue rather than creating a second.
 
 **Do not write to Directus.** Content changes go to Linear for a human.
 
-## Silence, completion line, budget
+## Silence is a valid result
 
-If there are no movers past threshold, the canvas is two lines: "No commercial movement past
-threshold. N informational items queued." Always post the completion line from `counts`: "run
-completed, N queries checked, M findings". Stop and report a partial before exceeding **15,000
-Ahrefs API units** (`gsc-*` and `gsc-ctr-by-position` are cheap/free; `keywords-explorer-overview`
-is ~10 units per keyword line) — do not silently truncate.
+If nothing clears threshold, the DM is two lines: "No commercial movement past threshold.
+N informational items queued." Do not pad it. A report that always finds twelve things trains
+the reader to stop opening it.
+
+Always send the DM, even on a quiet week, and always end with "run completed, N queries
+checked, M findings". A Monday with no message is ambiguous between "nothing moved" and "the
+run failed".
