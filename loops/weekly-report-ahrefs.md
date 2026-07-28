@@ -177,38 +177,38 @@ Next week's diff depends on this; skip it and every week looks like week one.
 
 ## Step 7 — deliver
 
-The report people read is a **Slack channel canvas in `#seo`** carrying the **full twelve
-sections** — not a summary. Slack renders canvas markdown (headings, tables, callouts) natively
-and privately to the workspace, with no link to break and nothing to download, so the canvas is
-the primary artifact. This report contains internal paid spend and strategy, so **never publish
-it to a public URL** (no GitHub Pages, no public link).
+The report people open is the **rendered `report.html`** (from `gleam_seo.render_html` — the
+exact twelve-section template with the diverging chart), delivered as a **native HTML file
+attached to a message in `#seo`**, exactly like the team's older `gleam-*.html` reports. When
+clicked, Slack opens the attachment and the browser renders the full styled page. **The HTML
+attachment is the report** — not a canvas, not a link. This report contains internal paid spend
+and strategy, so **never publish it to a public URL** (no GitHub Pages, no public link); a native
+Slack file stays inside the workspace.
 
-Build every section into the canvas from the computed data: the headline table; section 02
-movers as a ranked table (keyword · was→now · Δ value · a simple text bar like `+████`); the
-gained/lost tables with diagnosis; cannibalisation and CTR-gap tables; the brand paid table with
-the rank-lost vs budget-lost reading; competition; AI search; the action queue with each item's
-`where`; informational; and the method log. Sections 05–06 show
-"not pulled this run — requires GA4".
+1. **Attach `report.html` to `#seo` (channel `C08F23HCDQA`).** The native Slack connector has no
+   file-upload tool, so use **Zapier's Slack action** — `selected_api: SlackCLIAPI`, action
+   `channel_message` — with its **`file`** field carrying the rendered `report.html` named
+   `SEO-<ISO week>.html`, and the `text` field holding a short summary: the single biggest
+   finding, the P1/P2 count, and the Linear IDs (MAR-####). You already hold the rendered HTML in
+   context from the render step — pass it to the `file` field. If that field needs a fetchable
+   file rather than inline content, first write `report.html` to the Drive folder
+   `Gleam SEO reports` as `SEO-<ISO week>.html` and hand Zapier that file. Confirm the Zapier
+   response is a success and the file shows in `#seo`. **If it errors, fall back** to
+   `_zap_raw_request` → Slack `files.upload` with `channels=C08F23HCDQA`,
+   `filename=SEO-<ISO week>.html`, `filetype=html`, `content=<the rendered HTML>`,
+   `initial_comment=<the summary>`. Do not fall back to a canvas-only post — the attachment is
+   the deliverable.
 
-Rules that avoid the failures already seen in testing:
+2. **Archive to Drive.** Keep the same `SEO-<ISO week>.html` in the Drive folder
+   `Gleam SEO reports` as the durable archive and for next week's diff bookkeeping.
 
-- **Create a fresh canvas each run** with `slack_create_canvas` (title `SEO — <ISO week>`). The
-  connector only makes standalone canvases you own — there is no channel-canvas option, so it
-  will live in your Files; that is expected. Then **post its returned `canvas_url` into `#seo`**
-  (channel `C08F23HCDQA`) with `slack_send_message` so the channel has the report. Do not reuse
-  or relink a previous run's canvas — always create a new one.
-- **Post one short plain-text message in `#seo`** — headline finding, P1/P2 count, Linear IDs.
-  Let Slack auto-link any bare URL; **never hand-build a `<url|label>` link, and never put a
-  line break or extra text inside a URL** — that is exactly what produced the broken link last
-  run.
-- Write the rendered `report.html` (from `gleam_seo.render_html`) to the Drive folder
-  `Gleam SEO reports` as `SEO-<ISO week>.html` **only as a downloadable archive**, and say in
-  the message that it must be downloaded and opened in a browser to render (Drive's inline
-  viewer shows source, not the page). Do not present the Drive link as the way to "view" the
-  report — the canvas is.
+3. **(Optional) at-a-glance canvas.** Only if genuinely useful, additionally create a short Slack
+   canvas summary and link it (bare URL, auto-linked — never a hand-built `<url|label>` link with
+   a line break inside it, which produced a broken link in testing). The canvas never replaces
+   the HTML attachment.
 
 **DM heads-up to Eddy** — three lines: the single most important finding, the P1/P2 count, and
-"full report is the canvas in #seo". Not the report itself.
+"report attached in #seo". Not the report itself.
 
 **Linear** — one issue per priority-1 and priority-2 action, **team Marketing**. A task that
 only states a problem is a defect; every issue must be actionable on its own. Each issue MUST
