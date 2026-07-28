@@ -192,10 +192,11 @@ the rank-lost vs budget-lost reading; competition; AI search; the action queue w
 
 Rules that avoid the failures already seen in testing:
 
-- **Create a NEW channel canvas in `#seo` (channel `C08F23HCDQA`) each run.** Do not reuse or
-  link a canvas ID from a previous run, and never create it in a DM — the Slack connector is
-  authenticated as Eddy, so an unscoped canvas lands in his personal space (that is where the
-  first run's canvas went).
+- **Create a fresh canvas each run** with `slack_create_canvas` (title `SEO — <ISO week>`). The
+  connector only makes standalone canvases you own — there is no channel-canvas option, so it
+  will live in your Files; that is expected. Then **post its returned `canvas_url` into `#seo`**
+  (channel `C08F23HCDQA`) with `slack_send_message` so the channel has the report. Do not reuse
+  or relink a previous run's canvas — always create a new one.
 - **Post one short plain-text message in `#seo`** — headline finding, P1/P2 count, Linear IDs.
   Let Slack auto-link any bare URL; **never hand-build a `<url|label>` link, and never put a
   line break or extra text inside a URL** — that is exactly what produced the broken link last
