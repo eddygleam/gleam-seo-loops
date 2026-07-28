@@ -2,9 +2,10 @@
 
 Paste everything below the line into the prompt field of a weekly Routine.
 
-Connectors required — all four are already present in the cloud session:
-**Ahrefs, Google Drive, Slack, Linear.** No Search Console, Google Ads, GA4 or Semrush
-connector is needed; this version does not use them.
+Connectors required — all present in the cloud session:
+**Ahrefs, Google Drive, Slack, Linear, Zapier.** There is no native Search Console, Google Ads,
+GA4 or Semrush connector: Search Console data comes from Ahrefs, and **Google Ads is reached
+through Zapier**. Nothing in this report is entered by hand — every figure is pulled by a tool.
 
 ---
 
@@ -103,32 +104,49 @@ improvement, since Semrush position data was found to contradict Search Console 
 Also pull `site-explorer-organic-competitors`, `serp-overview` for the top movers and brand
 modifier terms, and `site-audit-issues` filtered to commercial URLs.
 
-## Step 4 — paid figures, manual
+## Step 4 — brand paid, pulled from Google Ads via Zapier
 
-There is no Google Ads or GA4 connector. These six fields are pasted into the snapshot JSON by
-a human before the run. Read them from the most recent snapshot file in Drive named
-`YYYY-MM-DD-manual.json`:
+No native Google Ads connector, but **Zapier reaches it** — account **9047806202**, AUD. Pull it
+with a tool; do not paste anything by hand and do not read a manual file.
 
-```json
-{
-  "brand_spend_aud": null,
-  "brand_conversions": null,
-  "brand_roas": null,
-  "brand_rank_lost_is_pct": null,
-  "brand_budget_lost_is_pct": null,
-  "conquest_cpa_aud": null
-}
-```
+Use the Zapier Google Ads actions (call `inspect_zapier_actions` for their exact parameters):
 
-Any field left `null` renders as "not pulled this run". Do not infer or carry forward.
+- **Campaign metrics** — `google_ads_create_report`, resource `campaign`, dates `LAST_7_DAYS`,
+  account 9047806202. Needs spend, conversions, conversions value (→ ROAS) and, critically,
+  `search_rank_lost_impression_share` and `search_budget_lost_impression_share`. If the Create
+  Report column set omits the impression-share metrics, fall back to raw GAQL via
+  `google_ads_make_api_get_request` / `..._mutating_request` against
+  `customers/9047806202/googleAds:search`:
+
+  ```sql
+  SELECT campaign.name, metrics.cost_micros, metrics.conversions, metrics.conversions_value,
+         metrics.search_rank_lost_impression_share, metrics.search_budget_lost_impression_share
+  FROM campaign WHERE segments.date DURING LAST_7_DAYS
+  ```
+  Cost is micros — divide by 1,000,000. GAQL has no `LAST_90_DAYS` literal; for the 90-day view
+  use `segments.date BETWEEN '<90 days ago>' AND '<yesterday>'`.
+
+- **Conquest CPA** — the same query narrowed to the Competitors campaign (`campaign.name`).
+
+Reduce the pull to exactly these six values and hand them to the report as its brand-paid block:
+`brand_spend_aud`, `brand_conversions`, `brand_roas`, `brand_rank_lost_is_pct`,
+`brand_budget_lost_is_pct`, `conquest_cpa_aud`. **Any value the pull does not return renders
+"not pulled this run" — never inferred, never carried forward (Rule 0).** If the Zapier Google
+Ads connection is unauthorised (a token error), say so in the method section and leave the six
+fields empty; do not fall back to a hand-typed number.
 
 Baselines from 2026-07-28 for sanity-checking: brand spend A$4,700, CPA A$41.69, ROAS 0.92,
-rank-lost 45.2%, budget-lost 3.3%, conquest CPA A$244.35. If pasted figures contradict these
-without obvious cause, flag it rather than reporting it silently.
+rank-lost 45.2%, budget-lost 3.3%, conquest CPA A$244.35. If the pulled figures contradict these
+without obvious cause, suspect the pull and flag it rather than reporting it silently.
 
-The rank-lost versus budget-lost distinction is the single most valuable number in this
-report: rank-lost means outranked, budget-lost means out of money, and they need opposite
-responses. Say so whenever it is present.
+The rank-lost versus budget-lost distinction is the single most valuable number in this report:
+rank-lost means outranked, budget-lost means out of money, and they need opposite responses. Say
+so whenever it is present.
+
+*(GA4 — sections 05 and 06.)* There is no GA4 connector today. GA4 is available in Zapier's
+catalogue (`Google Analytics 4`) but not yet connected; once it is, organic revenue by landing
+page and referral revenue can be pulled the same way. Until then, render 05 and 06 as
+"not pulled this run — requires GA4".
 
 ## Step 5 — build the report, all 12 sections
 
@@ -153,8 +171,9 @@ Every item carries its `where`.
 ## Step 6 — snapshot to Drive
 
 Write this run's pulls to Google Drive folder `Gleam SEO snapshots` as
-`YYYY-MM-DD-<kind>.json` for kinds `gsc_keywords`, `gsc_pages`, `ctr_curve`, `movers`. Next
-week's diff depends on this; skip it and every week looks like week one.
+`YYYY-MM-DD-<kind>.json` for kinds `gsc_keywords`, `gsc_pages`, `ctr_curve`, `movers`, and
+`brand_paid` (the six figures pulled from Google Ads, for history and week-on-week paid deltas).
+Next week's diff depends on this; skip it and every week looks like week one.
 
 ## Step 7 — deliver
 

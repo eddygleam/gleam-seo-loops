@@ -51,9 +51,10 @@ from gleam_seo.paid import aggregate_keywords, lost_share_reading
 
 NOT_PULLED = "not pulled this run"
 
-# Exactly the six fields of the human-pasted YYYY-MM-DD-manual.json (see the
-# Ahrefs-backed Routine prompt, Step 4). Names and units are part of the
-# contract: *_aud = AUD, *_pct = a percentage (e.g. 45.2, not 0.452).
+# The six brand-paid fields the report consumes (see the Ahrefs-backed Routine
+# prompt, Step 4). Sourced automatically from Google Ads via Zapier — no manual
+# paste. Names and units are part of the contract: *_aud = AUD, *_pct = a
+# percentage (e.g. 45.2, not 0.452). Anything absent renders "not pulled".
 MANUAL_FIELDS = (
     "brand_spend_aud",
     "brand_conversions",
@@ -406,7 +407,7 @@ def build_report(payload: dict) -> dict:
 
         "brand": {
             "_source": narrative.get("brand", {}).get("_source",
-                       "Brand KPIs from the six-field manual block (Google Ads 9047806202)."),
+                       "Brand KPIs from Google Ads 9047806202 (pulled via Zapier)."),
             "kpis": narrative.get("brand", {}).get("kpis") or brand_kpis,
             "paid": narrative.get("brand", {}).get("paid", []),
             "paidsrc": narrative.get("brand", {}).get("paidsrc", paidsrc),
@@ -424,7 +425,7 @@ def build_report(payload: dict) -> dict:
             "Search Console via Ahrefs gsc-* (project_id 684395) — clicks, impressions, CTR, position, top_url.",
             "CTR benchmark from Ahrefs gsc-ctr-by-position (own 90-day data, 0 units).",
             "Volume and CPC from Ahrefs keywords-explorer-overview; positions always from GSC.",
-            "Brand paid from the six-field manual block (Google Ads 9047806202, AUD).",
+            "Brand paid from Google Ads 9047806202 (AUD), pulled via Zapier — no manual entry.",
             "GA4 revenue and referral revenue have no connector this run — sections 05 and 06 read 'not pulled this run'.",
             "Value delta = Δ(volume × own-site CTR at position) × CPC. Snapshots written to Drive and diffed.",
         ]),
