@@ -126,8 +126,8 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
   </tr></thead><tbody id="lost"></tbody></table></div>
   <p class="src">Diagnosis is derived, not guessed: a changed ranking URL means cannibalisation rather than a ranking loss; a changed SERP composition means the fix is not on-page.</p>
 
-  <h3>Rest of the commercial set — by cluster</h3>
-  <p>Every other commercial keyword grouped by theme, with net position movement per cluster. Expand a cluster for the individual keywords.</p>
+  <h3>Commercial keywords by pillar</h3>
+  <p>The full commercial keyword set grouped into the seven pillars, with net position movement per pillar. Expand a pillar for its keywords. A pillar with no ranking terms is flagged as a coverage gap.</p>
   <div id="clusters"></div>
 </section>
 
@@ -360,34 +360,38 @@ const REPORT = {
       url:"/pricing" }
   ],
 
-  /* 03b — remaining commercial keywords grouped by cluster. net = Σ(was − now), + = improved. */
+  /* 03b — commercial keywords grouped into the seven fixed pillars. net = Σ(was − now), + = improved.
+     Keep all seven every week, in this order; an empty pillar renders a coverage-gap note. */
   clusters: [
-    { name:"Giveaway — generic & directory", up:1, down:1, flat:7, net:0, kws:[
+    { name:"gleam (brand)", up:0, down:0, flat:4, net:0, kws:[
+      { kw:"gleam", was:1, now:1, vol:22000, url:"/" },
+      { kw:"gleam.io", was:1, now:1, vol:500, url:"/" },
+      { kw:"gleam giveaways", was:1, now:1, vol:300, url:"/giveaways" },
+      { kw:"gleam pricing", was:1, now:1, vol:100, url:"/pricing" }
+    ]},
+    { name:"giveaways", up:1, down:2, flat:3, net:-3, kws:[
       { kw:"giveaway", was:1, now:1, vol:17000, url:"/giveaways" },
       { kw:"giveaways", was:1, now:2, vol:9900, url:"/giveaways" },
-      { kw:"give away", was:1, now:1, vol:2600, url:"/giveaways" },
-      { kw:"free giveaway", was:1, now:1, vol:800, url:"/giveaways" },
-      { kw:"online giveaway", was:1, now:1, vol:150, url:"/giveaways" },
+      { kw:"pc giveaway", was:1, now:2, vol:1300, url:"/giveaways" },
       { kw:"win prizes", was:2, now:1, vol:350, url:"/giveaways" },
-      { kw:"giveaway website", was:1, now:1, vol:60, url:"/giveaways" },
-      { kw:"best giveaway websites", was:1, now:1, vol:70, url:"/giveaways" },
-      { kw:"gaming giveaways", was:3, now:3, vol:100, url:"/giveaways" }
+      { kw:"give away", was:1, now:1, vol:2600, url:"/giveaways" },
+      { kw:"giveaway platform", was:1, now:1, vol:150, url:"/app/competitions" }
     ]},
-    { name:"Sweepstakes", up:0, down:1, flat:3, net:-1, kws:[
+    { name:"competitions", up:0, down:0, flat:0, net:0, kws:[] },
+    { name:"contests", up:0, down:0, flat:2, net:0, kws:[
+      { kw:"contest platform", was:2, now:2, vol:200, url:"/app/competitions" },
+      { kw:"free online contest platform", was:2, now:2, vol:200, url:"/app/competitions" }
+    ]},
+    { name:"sweepstakes", up:0, down:1, flat:3, net:-1, kws:[
       { kw:"sweepstakes websites", was:1, now:1, vol:1700, url:"/giveaways" },
       { kw:"free sweepstakes", was:5, now:6, vol:1500, url:"/giveaways" },
       { kw:"free sweepstakes websites", was:7, now:7, vol:500, url:"/giveaways" },
       { kw:"free sweepstakes to enter", was:1, now:1, vol:500, url:"/giveaways" }
     ]},
-    { name:"Contest & giveaway platform (tool intent)", up:0, down:0, flat:6, net:0, kws:[
-      { kw:"giveaway platform", was:1, now:1, vol:150, url:"/app/competitions" },
-      { kw:"contest platform", was:2, now:2, vol:200, url:"/app/competitions" },
-      { kw:"giveaway creator", was:1, now:1, vol:70, url:"/app/competitions" },
-      { kw:"giveaway manager", was:1, now:1, vol:80, url:"/app/competitions" },
-      { kw:"create a giveaway", was:1, now:1, vol:50, url:"/app/competitions" },
-      { kw:"host a giveaway", was:1, now:1, vol:60, url:"/app/competitions" }
+    { name:"gleam vs (competitors)", up:0, down:0, flat:1, net:0, kws:[
+      { kw:"gleam alternatives", was:8, now:8, vol:300, url:"/" }
     ]},
-    { name:"Social media contest / giveaway", up:1, down:0, flat:3, net:2, kws:[
+    { name:"social", up:1, down:0, flat:3, net:2, kws:[
       { kw:"social media giveaway", was:3, now:1, vol:150, url:"/app/competitions" },
       { kw:"social media contest", was:1, now:1, vol:350, url:"/app/competitions" },
       { kw:"social media contest platform", was:1, now:1, vol:150, url:"/app/competitions" },
@@ -796,8 +800,8 @@ $('lost').innerHTML = REPORT.lost.map(r => `<tr>
           <span class="mono" style="font-size:11px;color:var(--ink-3);margin-left:6px">${c.up}▲ ${c.down}▼ ${c.flat}· · ${c.kws.length} kw</span></span>
         <span class="mono" style="font-size:12px">${badge}</span></button>
       <div class="cl-body" style="display:none;padding:0 15px 12px;overflow-x:auto">
-        <table><thead><tr><th class="l">Keyword</th><th>Was</th><th>Now</th><th>Δ</th><th>Vol</th><th class="l">Ranking URL</th></tr></thead>
-        <tbody>${rows}</tbody></table></div></div>`;
+        ${c.kws.length ? `<table><thead><tr><th class="l">Keyword</th><th>Was</th><th>Now</th><th>Δ</th><th>Vol</th><th class="l">Ranking URL</th></tr></thead>
+        <tbody>${rows}</tbody></table>` : `<div class="callout amber" style="margin:0">No commercial keyword ranking in this pillar this run — a coverage gap worth a brief.</div>`}</div></div>`;
   }).join('');
   [...document.querySelectorAll('#clusters button')].forEach(b => b.onclick = () => {
     const body = b.nextElementSibling;

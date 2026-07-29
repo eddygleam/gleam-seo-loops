@@ -200,13 +200,26 @@ the existing sections — it never replaces 02–04. Fixed competitor set
   `{domains:[…5…], rows:[{kw, vol, pos:{"<domain>":best_position}}]}`. A domain absent from a row
   = not ranking (top 100). All positions are Ahrefs crawl, comparable across columns.
 
-**Section 03 also carries a `clusters` block** below the Gained/Lost winners & losers: every
-*remaining* commercial keyword (not already a winner or loser) grouped by theme
-(e.g. giveaway-generic, sweepstakes, contest/giveaway platform, social-media contest). Build
-`clusters: [{name, up, down, flat, net, kws:[{kw, was, now, vol, url}]}]` where `net = Σ(was −
-now)` (positive = net improvement); `up/down/flat` are counts within the cluster. Each cluster
-renders a one-line summary with an expand button that reveals its keyword rows. Assign every
-commercial keyword to exactly one cluster so none are dropped.
+**Section 03 also carries a `clusters` block** below the Gained/Lost winners & losers. Group the
+**commercial keywords only** into these SEVEN fixed pillars, in this display order:
+
+1. **gleam (brand)** — any term containing "gleam" (except comparison terms → pillar 6).
+2. **giveaways** — giveaway / give away / giveaways / raffle, prize-led terms (pc, laptop, GPU,
+   console…), and giveaway platform / creator / manager.
+3. **competitions** — "competition(s)" terms.
+4. **contests** — "contest(s)" terms (contest platform, contest software…).
+5. **sweepstakes** — "sweepstake(s)" terms.
+6. **gleam vs (competitors)** — comparison / conquest: "X alternative(s)", "gleam vs", "vs gleam".
+7. **social** — channel-tied terms (social media, instagram, tiktok, twitter, twitch, youtube,
+   facebook).
+
+Assign each keyword to the FIRST pillar it matches in this **priority order**: competitors →
+brand → social → sweepstakes → contests → competitions → giveaways. Exclude informational terms
+(how-to, ideas, rules, "what is", "is X legit") — those are §11. Build
+`clusters: [{name, up, down, flat, net, kws:[{kw, was, now, vol, url}]}]`, `net = Σ(was − now)`
+(+ = net improvement). Keep all seven pillars every week, in order. A pillar with no ranking
+commercial keyword this run renders a one-line note ("no ranking terms this run") rather than an
+empty table (Rule 3) — an empty pillar is itself a finding: a coverage gap worth a queue item.
 
 Sections 05 and 06 have no data source in this configuration. Render them with a clear
 "not pulled this run — requires GA4" note rather than omitting them, so the structure stays
