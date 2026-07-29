@@ -185,27 +185,39 @@ attachment is the report** — not a canvas, not a link. This report contains in
 and strategy, so **never publish it to a public URL** (no GitHub Pages, no public link); a native
 Slack file stays inside the workspace.
 
-1. **Attach `report.html` to `#seo` (channel `C08F23HCDQA`).** The native Slack connector has no
-   file-upload tool, so use **Zapier's Slack action** — `selected_api: SlackCLIAPI`, action
-   `channel_message` — with its **`file`** field carrying the rendered `report.html` named
-   `SEO-<ISO week>.html`, and the `text` field holding a short summary: the single biggest
-   finding, the P1/P2 count, and the Linear IDs (MAR-####). You already hold the rendered HTML in
-   context from the render step — pass it to the `file` field. If that field needs a fetchable
-   file rather than inline content, first write `report.html` to the Drive folder
-   `Gleam SEO reports` as `SEO-<ISO week>.html` and hand Zapier that file. Confirm the Zapier
-   response is a success and the file shows in `#seo`. **If it errors, fall back** to
-   `_zap_raw_request` → Slack `files.upload` with `channels=C08F23HCDQA`,
-   `filename=SEO-<ISO week>.html`, `filetype=html`, `content=<the rendered HTML>`,
-   `initial_comment=<the summary>`. Do not fall back to a canvas-only post — the attachment is
-   the deliverable.
+The loop does **not** upload the file to Slack directly — that path does not work with the
+available connectors, and this was verified by testing:
 
-2. **Archive to Drive.** Keep the same `SEO-<ISO week>.html` in the Drive folder
-   `Gleam SEO reports` as the durable archive and for next week's diff bookkeeping.
+- The Slack MCP connector has **no file-upload tool**.
+- Zapier's `channel_message` `file` field, given inline HTML, stores a **`.txt` binary**
+  (`application/octet-stream`) that Slack will not render — not an `.html`.
+- Slack `files.upload` (the API that sets `filetype=html`) returns **`method_deprecated`** on
+  this workspace.
+- A private Drive URL handed to the `file` field is **not fetchable** by Zapier (no auth), and
+  the Drive connector here exposes no "share link" action to make it fetchable.
 
-3. **(Optional) at-a-glance canvas.** Only if genuinely useful, additionally create a short Slack
-   canvas summary and link it (bare URL, auto-linked — never a hand-built `<url|label>` link with
-   a line break inside it, which produced a broken link in testing). The canvas never replaces
-   the HTML attachment.
+Instead, split the work: the **loop writes the file to Drive**, and a **standing Zapier Zap posts
+it** (this is how the team's older `gleam-*.html` reports are delivered — Zapier's authenticated
+Drive step hands Slack a real `.html`, which renders on click).
+
+1. **Write `report.html` to Drive.** Use `mcp__Google_Drive__create_file` with
+   `contentMimeType: text/html`, `disableConversionToGoogleType: true`, `title:
+   SEO-<ISO week>.html`, into the folder `Gleam SEO reports`. You hold the rendered HTML in
+   context from the render step; pass it as `textContent`. This file is both the archive and the
+   source the Zap posts.
+
+2. **The standing Zap posts it to `#seo`.** A Zap watches that Drive folder and posts the new
+   file as a native `.html` attachment in `#seo` (channel `C08F23HCDQA`) with a summary comment.
+   The loop does not call Slack for the report file. *(One-time setup, in the Zapier UI: trigger
+   **Google Drive → New File in Folder** = `Gleam SEO reports`; action **Slack → Send Channel
+   Message**, Channel `#seo`, File mapped to the trigger's file, Message = the summary. If this
+   Zap does not yet exist, the report will land in Drive but not auto-post until it is created.)*
+
+3. **Post the summary text in `#seo` yourself** (via `slack_send_message`): the single biggest
+   finding, the P1/P2 count, and the Linear IDs (MAR-####). Keep it to plain text with bare
+   auto-linked URLs — never a hand-built `<url|label>` link with a line break inside it (that
+   produced a broken link in testing). This guarantees the channel has the headline even if the
+   file-posting Zap is not yet wired.
 
 **DM heads-up to Eddy** — three lines: the single most important finding, the P1/P2 count, and
 "report attached in #seo". Not the report itself.
