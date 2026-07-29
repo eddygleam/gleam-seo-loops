@@ -154,10 +154,34 @@ Reproduce the structure of `templates/weekly-report.html` **exactly** — all tw
 including the diverging value-change chart in section 02. Do not produce a shortened version;
 a previous run emitted an 8-section variant and it was rejected.
 
-The sections are: 01 scorecard · 02 what moved (diverging value chart) · 03 movers with
-diagnosis · 04 flags, cannibalisation and CTR gap · 05 revenue · 06 referral revenue ·
-07 brand · 08 competition · 09 AI search · 10 where to make changes · 11 informational track ·
-12 method and run log.
+The sections are: 01 scorecard · 02 position tracking (competitor visibility + rankings
+snapshot) · 03 keywords by intent (intent-filterable table) · 04 per-keyword competitor grid ·
+05 revenue · 06 referral revenue · 07 brand · 08 competition · 09 AI search · 10 where to make
+changes · 11 informational track · 12 method and run log.
+
+**Sections 02–04 are a Semrush-style Position Tracking view**, built from Ahrefs with the fixed
+competitor set `app-sorteos.com, easypromosapp.com, woobox.com, viralsweep.com` (plus gleam.io).
+The template consumes these REPORT fields — build exactly these, not the old
+diverge/gained/lost/cannib/ctrgap:
+
+- **02 `compvis` + `ranksnap`** — `site-explorer-metrics` (mode subdomains, country us) for each
+  of the five domains → `{dom, kw:org_keywords, top3:org_keywords_1_3, traf:org_traffic,
+  val:org_cost÷100, self}`. `ranksnap` = gleam.io's four headline KPI cards.
+- **03 `trackkw`** — `site-explorer-organic-keywords` for gleam.io with `date_compared` 30 days
+  prior: `{kw, intent, vol, pos:best_position, prev:best_position_prev, url:best_position_url}`.
+  `intent` is one of C/I/N/B from `is_commercial/is_informational/is_navigational`, brand terms → B.
+- **04 `grid`** — a fixed tracked keyword list (commercial/category terms competitors contest:
+  giveaway, giveaways, sweepstakes websites, giveaway platform, contest platform, contest
+  software, social media contest, giveaway creator, run a giveaway, online giveaway…). For each
+  of the five domains call `site-explorer-organic-keywords` with a `where` OR-filter on those
+  keywords and `select keyword,best_position,volume`; assemble
+  `{domains:[…5…], rows:[{kw, vol, pos:{"<domain>":best_position}}]}`. A domain absent from a row
+  = not ranking (top 100). All positions are Ahrefs crawl so the columns are comparable;
+  gleam.io's own CTR/impressions elsewhere stay Search Console.
+
+CTR-gap and cannibalisation are still computed from `gsc-keywords` (CTR vs the `gsc-ctr-by-position`
+curve; cannibalisation from `urls_count`) — they feed the scorecard headline and the action queue,
+they simply no longer have standalone sections.
 
 Sections 05 and 06 have no data source in this configuration. Render them with a clear
 "not pulled this run — requires GA4" note rather than omitting them, so the structure stays

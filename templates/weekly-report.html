@@ -102,61 +102,37 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
   <p class="src" id="kpisrc"></p>
 </section>
 
-<!-- 02 SIGNATURE: value movement -->
+<!-- 02 POSITION TRACKING -->
 <section>
-  <div class="snum">02 · WHAT MOVED</div>
-  <h2>Change in estimated traffic value, this week</h2>
-  <p>Ranked by money, not position. A keyword going #47 → #29 looks dramatic and is worth nothing; a top-3 term slipping two places on an A$11 CPC is worth a great deal. Solid bars are commercial, faded bars informational.</p>
-  <div class="dv" id="diverge"></div>
+  <div class="snum">02 · POSITION TRACKING</div>
+  <h2>Visibility vs tracked competitors</h2>
+  <p>Organic footprint against the fixed competitor set. Positions are Ahrefs crawl (US) for every domain, so the columns are directly comparable.</p>
+  <div style="overflow-x:auto"><table><thead><tr>
+    <th class="l">Domain</th><th>Org keywords</th><th>Top-3</th><th>Est. traffic/mo</th><th>Traffic value/mo</th><th class="l">Visibility</th>
+  </tr></thead><tbody id="compvis"></tbody></table></div>
+  <div class="kpis" id="ranksnap"></div>
+  <p class="src">Ahrefs Site Explorer metrics, US. Traffic value is the organic cost equivalent.</p>
 </section>
 
-<!-- 03 MOVERS -->
+<!-- 03 KEYWORDS BY INTENT -->
 <section>
-  <div class="snum">03 · MOVERS</div>
-  <h2>Commercial gains and losses, with diagnosis</h2>
-
-  <h3>Gained</h3>
+  <div class="snum">03 · KEYWORDS BY INTENT</div>
+  <h2>Tracked keywords</h2>
+  <p>Filter by search intent, the way a position tracker does. Position change is versus the 30-day-prior snapshot.</p>
+  <div id="kwfilters" style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px"></div>
   <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Keyword</th><th class="l">Cluster</th><th>Was</th><th>Now</th><th>Vol</th><th>CPC</th><th>Δ value</th><th class="l">Ranking URL</th>
-  </tr></thead><tbody id="gained"></tbody></table></div>
-
-  <h3>Lost</h3>
-  <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Keyword</th><th class="l">Cluster</th><th>Was</th><th>Now</th><th>Vol</th><th>CPC</th><th>Δ value</th><th class="l">Diagnosis</th><th class="l">Fix at</th>
-  </tr></thead><tbody id="lost"></tbody></table></div>
-  <p class="src">Diagnosis is derived, not guessed: a changed ranking URL means cannibalisation rather than a ranking loss; a changed SERP composition means the fix is not on-page.</p>
+    <th class="l">Keyword</th><th class="l">Intent</th><th>Volume</th><th>Position</th><th>Change</th><th class="l">Ranking URL</th>
+  </tr></thead><tbody id="trackkw"></tbody></table></div>
+  <p class="src">Ahrefs organic keywords (US) + Search Console. Intent from Ahrefs; where a term carries several intents the primary is shown.</p>
 </section>
 
-<!-- 04 FLAGS -->
+<!-- 04 COMPETITOR GRID -->
 <section>
-  <div class="snum">04 · FLAGS</div>
-  <h2>Problems ranking data hides</h2>
-
-  <h3>Cannibalisation — two Gleam URLs competing</h3>
-  <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Keyword</th><th>CPC</th><th class="l">URL A</th><th class="l">URL B</th><th>Flips (4wk)</th><th class="l">Keep</th><th class="l">Recommended action</th>
-  </tr></thead><tbody id="cannib"></tbody></table></div>
-
-  <div class="callout amber">
-    <b>How to de-cannibalise — in this order.</b> Skipping step 4 is why cannibalisation comes back.
-    <ol style="margin:8px 0 0 20px">
-      <li><b>Pick the winner on evidence, not preference.</b> Count ranking keywords in the cluster, referring domains, and conversion rate per session. Highest of the three wins. Never pick on which page you prefer or which is newer.</li>
-      <li><b>Choose redirect or differentiate.</b> If the losing page has no independent job → 301 to the winner. If it genuinely serves different intent (a template someone lands on from inside the app) → keep it and retarget it. Canonical tags are the wrong tool here: Google treats them as a hint and the flipping often continues.</li>
-      <li><b>Strip the competing signal.</b> On the losing page, remove the target keyword from title, H1 and first paragraph. Give it a modifier the winner is not chasing.</li>
-      <li><b>Repoint every internal link.</b> Any internal anchor using the target keyword must point at the winner. This is the step that actually resolves it — the rest is housekeeping.</li>
-      <li><b>Update the sitemap</b> and remove the redirected URL.</li>
-      <li><b>Re-submit the winner</b> via <code class="mono">gsc:inspect_url_enhanced</code> so the change is picked up in days rather than weeks.</li>
-      <li><b>Watch four weeks.</b> One URL should hold consistently. Continued flipping means the two pages are still too similar — go back to step 3.</li>
-    </ol>
-  </div>
-
-  <p><span class="b n">Site health 91</span> <span class="dn">−1 WoW</span> — below the alert threshold of 88 triggers a technical item; it has not.</p>
-
-  <h3>CTR below position benchmark — metadata problem</h3>
-  <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Keyword</th><th>Pos</th><th>Impr</th><th>Actual CTR</th><th>Expected</th><th>Gap</th><th class="l">Page</th>
-  </tr></thead><tbody id="ctrgap"></tbody></table></div>
-  <p class="src">Expected CTR is Gleam's own 90-day average at that position, from Search Console — not an industry table. A keyword at #3 pulling well under benchmark is a title problem the ranking never reveals.</p>
+  <div class="snum">04 · COMPETITOR GRID</div>
+  <h2>Per-keyword position vs competitors</h2>
+  <p>Best organic position for each domain on the tracked keyword set. <span class="mono">—</span> means not ranking in the top 100; the green cell is the best on that row.</p>
+  <div style="overflow-x:auto"><table><thead id="gridhead"></thead><tbody id="grid"></tbody></table></div>
+  <p class="src">Ahrefs SERP crawl for all domains (US), so positions are comparable across columns. gleam.io's own CTR and impressions elsewhere in this report come from Search Console.</p>
 </section>
 
 <!-- 05 REVENUE -->
@@ -301,61 +277,69 @@ const REPORT = {
   ],
   kpisrc: "Commercial set = 1,368 tool/software/platform terms + 795 action terms + directory + brand-product, per config. Brand split out of every aggregate: 'gleam' alone carries 14,800 monthly volume and would otherwise swamp the trend.",
 
-  /* Δ estimated monthly traffic value, AUD. Sorted by absolute value by the renderer. */
-  diverge: [
-    { kw:"live draw",                 pos:"8→11",  d:-412, track:"commercial" },
-    { kw:"instagram giveaway picker",  pos:"6→4",   d:+168, track:"commercial" },
-    { kw:"contest software",           pos:"4→6",   d:-196, track:"commercial" },
-    { kw:"instagram comment picker",   pos:"9→11",  d:-121, track:"commercial" },
-    { kw:"contest platform",           pos:"4→2",   d:+118, track:"commercial" },
-    { kw:"giveaway websites",          pos:"2→1",   d:+96,  track:"commercial" },
-    { kw:"social media giveaways",     pos:"2→4",   d:-88,  track:"commercial" },
-    { kw:"social media giveaway tools",pos:"5→2",   d:+74,  track:"commercial" },
-    { kw:"gleam pricing",              pos:"8→11",  d:-64,  track:"commercial" },
-    { kw:"contest promotion",          pos:"2→2",   d:+41,  track:"informational" },
-    { kw:"no purchase is necessary",   pos:"3→5",   d:-38,  track:"informational" },
-    { kw:"random name drawing",        pos:"7→7",   d:+29,  track:"commercial" }
+  /* 02 — competitor visibility (Ahrefs Site Explorer, US). val = organic cost equiv, AUD. */
+  compvis: [
+    { dom:"gleam.io", kw:888, top3:383, traf:24829, val:34655, self:true },
+    { dom:"app-sorteos.com", kw:3726, top3:1471, traf:198590, val:83469 },
+    { dom:"easypromosapp.com", kw:1203, top3:362, traf:3213, val:2541 },
+    { dom:"woobox.com", kw:705, top3:148, traf:4083, val:3451 },
+    { dom:"viralsweep.com", kw:376, top3:127, traf:4113, val:5779 }
   ],
 
-  gained: [
-    { kw:"instagram giveaway picker",   cl:"Tool", was:6, now:4, vol:3600, cpc:0.47, d:+168, url:"/tools/instagram-comment-picker" },
-    { kw:"contest platform",            cl:"Platform-software", was:4, now:2, vol:110, cpc:8.10, d:+118, url:"/app/competitions" },
-    { kw:"giveaway websites",           cl:"Directory-commercial", was:2, now:1, vol:320, cpc:2.02, d:+96, url:"/giveaways" },
-    { kw:"social media giveaway tools", cl:"Platform-software", was:5, now:2, vol:110, cpc:3.05, d:+74, url:"/app/competitions" }
+  ranksnap: [
+    { k:"Organic keywords (US)", v:"888", d:"tracked in Ahrefs", dir:"flat" },
+    { k:"Top-3 positions", v:"383", d:"43% of keywords", dir:"up" },
+    { k:"Est. organic traffic", v:"24,829", d:"visits / month", dir:"flat" },
+    { k:"Traffic value", v:"A$34.7k", d:"organic cost equiv./mo", dir:"up" }
   ],
 
-  lost: [
-    { kw:"live draw", cl:"Tool", was:8, now:11, vol:590, cpc:11.24, d:-412,
-      diag:"SERP change — new AI Overview, no Gleam citation", dtype:"serp",
-      url:"/templates/competitions/live-draw" },
-    { kw:"contest software", cl:"Platform-software", was:4, now:6, vol:210, cpc:7.87, d:-196,
-      diag:"URL flip — /solutions/contests ↔ /app/competitions", dtype:"cannib",
-      url:"/app/competitions (keep) + /solutions/contests (301)" },
-    { kw:"instagram comment picker", cl:"Tool", was:9, now:11, vol:1600, cpc:0.43, d:-121,
-      diag:"URL flip — /tools/ ↔ /templates/competitions/", dtype:"cannib",
-      url:"/templates/competitions/instagram-comment-picker (retarget)" },
-    { kw:"social media giveaways", cl:"Platform-software", was:2, now:4, vol:140, cpc:6.97, d:-88,
-      diag:"Ranking loss — SweepWidget gained same week", dtype:"rank",
-      url:"/app/competitions" },
-    { kw:"gleam pricing", cl:"Brand-product", was:8, now:11, vol:"n/a", cpc:4.15, d:-64,
-      diag:"Ranking loss — own brand term outside top 10", dtype:"rank",
-      url:"/pricing" }
+  /* 03 — intent: C commercial · I informational · B branded · N navigational. prev=null = new. */
+  trackkw: [
+    { kw:"gleam", intent:"B", vol:22000, pos:1, prev:1, url:"/" },
+    { kw:"giveaway", intent:"C", vol:17000, pos:1, prev:1, url:"/giveaways" },
+    { kw:"giveaways", intent:"C", vol:9900, pos:2, prev:1, url:"/giveaways" },
+    { kw:"how to create a social media contest", intent:"I", vol:5400, pos:5, prev:4, url:"/app/competitions" },
+    { kw:"sweepstakes websites", intent:"C", vol:1700, pos:1, prev:1, url:"/giveaways" },
+    { kw:"free sweepstakes", intent:"C", vol:1500, pos:6, prev:5, url:"/giveaways" },
+    { kw:"pc giveaway", intent:"C", vol:1300, pos:2, prev:1, url:"/giveaways" },
+    { kw:"free giveaway", intent:"C", vol:800, pos:1, prev:1, url:"/giveaways" },
+    { kw:"gleam app", intent:"B", vol:720, pos:4, prev:4, url:"/" },
+    { kw:"giveaways to enter", intent:"C", vol:700, pos:1, prev:null, url:"/giveaways" },
+    { kw:"gleam.io", intent:"B", vol:500, pos:1, prev:1, url:"/" },
+    { kw:"what is gleam", intent:"B", vol:350, pos:1, prev:2, url:"/" },
+    { kw:"win prizes", intent:"C", vol:350, pos:1, prev:2, url:"/giveaways" },
+    { kw:"social media contest", intent:"C", vol:350, pos:1, prev:1, url:"/app/competitions" },
+    { kw:"contest platform", intent:"C", vol:200, pos:2, prev:2, url:"/app/competitions" },
+    { kw:"giveaway websites", intent:"C", vol:200, pos:2, prev:1, url:"/giveaways" },
+    { kw:"giveaway platform", intent:"C", vol:150, pos:1, prev:1, url:"/app/competitions" },
+    { kw:"social media giveaway", intent:"C", vol:150, pos:1, prev:3, url:"/app/competitions" },
+    { kw:"is gleam.io legit", intent:"B", vol:100, pos:1, prev:1, url:"/faq/general/is-gleam-legit" },
+    { kw:"giveaway creator", intent:"C", vol:70, pos:1, prev:1, url:"/app/competitions" },
+    { kw:"gleam login", intent:"N", vol:50, pos:1, prev:1, url:"/login" }
   ],
 
-  cannib: [
-    { kw:"contest software", cpc:7.87, a:"/solutions/contests", b:"/app/competitions", flips:3,
-      winner:"/app/competitions",
-      act:"REDIRECT. /solutions/contests has no independent job — 301 it, move its 2 referring domains across, repoint 11 internal links." },
-    { kw:"instagram comment picker", cpc:0.43, a:"/tools/instagram-comment-picker", b:"/templates/competitions/instagram-comment-picker", flips:2,
-      winner:"/tools/instagram-comment-picker",
-      act:"DIFFERENTIATE, do not redirect. The template page serves campaign setup — retarget it at \"instagram comment picker template\" and drop the head term from its title and H1." }
-  ],
-
-  ctrgap: [
-    { kw:"giveaway websites", pos:1, impr:2840, actual:"18.4%", expected:"31.2%", gap:"−41%", page:"/giveaways" },
-    { kw:"social media contest", pos:1, impr:1120, actual:"9.8%", expected:"31.2%", gap:"−69%", page:"/app/competitions" },
-    { kw:"qr code live competition", pos:1, impr:390, actual:"11.1%", expected:"31.2%", gap:"−64%", page:"/templates/competitions/qr-code-contest" }
-  ],
+  /* 04 — per-keyword competitor grid. pos keyed by domain; absent = not ranking (top 100). */
+  grid: {
+    domains: ["gleam.io","app-sorteos.com","easypromosapp.com","woobox.com","viralsweep.com"],
+    rows: [
+      { kw:"giveaway", vol:17000, pos:{ "gleam.io":1 } },
+      { kw:"giveaways", vol:9900, pos:{ "gleam.io":2 } },
+      { kw:"sweepstakes websites", vol:1700, pos:{ "gleam.io":1 } },
+      { kw:"free sweepstakes", vol:1500, pos:{ "gleam.io":6 } },
+      { kw:"pc giveaway", vol:1300, pos:{ "gleam.io":2 } },
+      { kw:"free giveaway", vol:800, pos:{ "gleam.io":1 } },
+      { kw:"giveaway platform", vol:150, pos:{ "gleam.io":1, "woobox.com":2, "viralsweep.com":3 } },
+      { kw:"contest platform", vol:200, pos:{ "gleam.io":2, "woobox.com":1 } },
+      { kw:"social media contest", vol:350, pos:{ "gleam.io":1 } },
+      { kw:"giveaway websites", vol:200, pos:{ "gleam.io":2 } },
+      { kw:"online giveaway", vol:150, pos:{ "gleam.io":1, "woobox.com":9 } },
+      { kw:"giveaway creator", vol:70, pos:{ "gleam.io":1, "app-sorteos.com":6, "woobox.com":2 } },
+      { kw:"social media giveaway", vol:150, pos:{ "gleam.io":1, "woobox.com":11 } },
+      { kw:"run a giveaway", vol:90, pos:{ "gleam.io":2, "app-sorteos.com":4, "easypromosapp.com":8 } },
+      { kw:"contest software", vol:100, pos:{ "gleam.io":8, "woobox.com":2, "viralsweep.com":1 } },
+      { kw:"sweepstakes", vol:23000, pos:{ "viralsweep.com":32 } }
+    ]
+  },
 
   sov: [
     { n:"gleam.io", v:34.2, d:"+0.8", self:true },
@@ -654,55 +638,72 @@ $('kpis').innerHTML = REPORT.kpis.map(k => `
   <div class="d flat" style="font-family:Inter">${esc(k.note)}</div></div>`).join('');
 $('kpisrc').textContent = REPORT.kpisrc;
 
-/* Signature: diverging strip, scaled to the largest absolute move */
+/* 02 competitor visibility + rankings snapshot */
 (() => {
-  const rows = [...REPORT.diverge].sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
-  const max = Math.max(...rows.map(r=>Math.abs(r.d))) || 1;
-  $('diverge').innerHTML = rows.map(r => {
-    const w = (Math.abs(r.d)/max)*49;
-    const cls = (r.d>=0?'pos':'neg') + (r.track==='informational'?' info':'');
-    return `<div class="dv-row">
-      <div class="dv-kw">${esc(r.kw)}<i>${esc(r.pos)}</i></div>
-      <div class="dv-track"><span class="dv-bar ${cls}" style="width:${w}%"></span></div>
-      <div class="dv-val ${r.d>=0?'up':'dn'}">${money(r.d)}</div></div>`;
-  }).join('') + `
-    <div class="dv-axis"><span>Keyword</span>
-      <span class="mid"><span>−A$${max.toLocaleString()}</span><span>0</span><span>+A$${max.toLocaleString()}</span></span>
-      <span style="text-align:right">Δ value/mo</span></div>
-    <div class="legend">
-      <span><i style="background:var(--green)"></i>Commercial gain</span>
-      <span><i style="background:var(--red)"></i>Commercial loss</span>
-      <span><i style="background:var(--green);opacity:.42"></i>Informational</span>
-    </div>`;
+  const maxT = Math.max(...REPORT.compvis.map(c=>c.traf));
+  $('compvis').innerHTML = REPORT.compvis.map(c => {
+    const w = Math.round(c.traf/maxT*100);
+    const bar = `<div style="height:12px;border-radius:3px;width:${w}%;background:${c.self?'var(--green)':'var(--line-2)'}"></div>`;
+    return `<tr${c.self?' style="background:var(--green-bg)"':''}>
+      <td class="l">${c.self?'<b>'+esc(c.dom)+'</b> <span class="b g">you</span>':esc(c.dom)}</td>
+      <td>${c.kw.toLocaleString()}</td><td class="up">${c.top3.toLocaleString()}</td>
+      <td>${c.traf.toLocaleString()}</td><td>A$${c.val.toLocaleString()}</td>
+      <td class="l">${bar}</td></tr>`;
+  }).join('');
+  $('ranksnap').innerHTML = REPORT.ranksnap.map(k=>`
+    <div class="kpi"><div class="k">${esc(k.k)}</div><div class="v">${esc(k.v)}</div>
+    <div class="d ${dirClass(k.dir)}">${esc(k.d)}</div></div>`).join('');
 })();
 
-$('gained').innerHTML = REPORT.gained.map(r => `<tr>
-  <td class="l"><b>${esc(r.kw)}</b></td><td class="l">${esc(r.cl)}</td>
-  <td>${r.was}</td><td class="up">${r.now}</td><td>${r.vol.toLocaleString?r.vol.toLocaleString():r.vol}</td>
-  <td>$${r.cpc.toFixed(2)}</td><td class="up">${money(r.d)}</td>
-  <td class="l mono">${esc(r.url)}</td></tr>`).join('');
+/* 03 keyword table by intent, with interactive intent filter */
+(() => {
+  const IB={C:['Commercial','bl'],I:['Informational','p'],B:['Branded','g'],N:['Navigational','a']};
+  const chg=(pos,prev)=> prev==null ? '<span class="up">▲ new</span>'
+    : (prev-pos>0 ? `<span class="up">▲ ${prev-pos}</span>`
+    : (prev-pos<0 ? `<span class="dn">▼ ${pos-prev}</span>` : '<span class="flat">·</span>'));
+  $('trackkw').innerHTML = REPORT.trackkw.map(r=>{
+    const b=IB[r.intent]||['—','n'];
+    const pc=r.pos<=3?'up':(r.pos>=11?'dn':'flat');
+    return `<tr data-i="${r.intent}">
+      <td class="l"><b>${esc(r.kw)}</b></td>
+      <td class="l"><span class="b ${b[1]}">${b[0]}</span></td>
+      <td>${r.vol.toLocaleString()}</td>
+      <td class="${pc}">${r.pos}</td><td>${chg(r.pos,r.prev)}</td>
+      <td class="l mono">${esc(r.url)}</td></tr>`;
+  }).join('');
+  const counts={all:REPORT.trackkw.length};
+  REPORT.trackkw.forEach(r=>counts[r.intent]=(counts[r.intent]||0)+1);
+  const defs=[['all','All'],['C','Commercial'],['I','Informational'],['B','Branded'],['N','Navigational']];
+  const base="font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 12px;border:1px solid var(--line-2);border-radius:20px;background:var(--panel);cursor:pointer;color:var(--ink-2)";
+  const on=";background:var(--ink);color:#fff;border-color:var(--ink)";
+  $('kwfilters').innerHTML = defs.filter(d=>d[0]==='all'||counts[d[0]]).map((d,i)=>
+    `<button data-f="${d[0]}" style="${base}${i===0?on:''}">${d[1]} (${counts[d[0]]||0})</button>`).join('');
+  const btns=[...$('kwfilters').querySelectorAll('button')];
+  const trs=[...$('trackkw').querySelectorAll('tr')];
+  btns.forEach(b=>b.onclick=()=>{
+    btns.forEach(x=>x.setAttribute('style',base));
+    b.setAttribute('style',base+on);
+    const f=b.dataset.f;
+    trs.forEach(t=>t.style.display=(f==='all'||t.dataset.i===f)?'':'none');
+  });
+})();
 
-const dbadge = t => ({cannib:'<span class="b p">cannibalisation</span>',
-                     serp:'<span class="b bl">SERP change</span>',
-                     rank:'<span class="b r">ranking loss</span>'}[t] || '');
-$('lost').innerHTML = REPORT.lost.map(r => `<tr>
-  <td class="l"><b>${esc(r.kw)}</b></td><td class="l">${esc(r.cl)}</td>
-  <td>${r.was}</td><td class="dn">${r.now}</td>
-  <td>${typeof r.vol==='number'?r.vol.toLocaleString():esc(r.vol)}</td>
-  <td>$${r.cpc.toFixed(2)}</td><td class="dn">${money(r.d)}</td>
-  <td class="l">${dbadge(r.dtype)} ${esc(r.diag)}</td>
-  <td class="l mono">${esc(r.url)}</td></tr>`).join('');
-
-$('cannib').innerHTML = REPORT.cannib.map(r => `<tr>
-  <td class="l"><b>${esc(r.kw)}</b></td><td>$${r.cpc.toFixed(2)}</td>
-  <td class="l mono">${esc(r.a)}</td><td class="l mono">${esc(r.b)}</td>
-  <td>${r.flips}</td><td class="l">${esc(r.winner)}</td>
-  <td class="l">${esc(r.act)}</td></tr>`).join('');
-
-$('ctrgap').innerHTML = REPORT.ctrgap.map(r => `<tr>
-  <td class="l"><b>${esc(r.kw)}</b></td><td>${r.pos}</td><td>${r.impr.toLocaleString()}</td>
-  <td>${esc(r.actual)}</td><td class="flat">${esc(r.expected)}</td>
-  <td class="dn">${esc(r.gap)}</td><td class="l mono">${esc(r.page)}</td></tr>`).join('');
+/* 04 per-keyword competitor grid */
+(() => {
+  const doms=REPORT.grid.domains;
+  $('gridhead').innerHTML = `<tr><th class="l">Keyword</th><th>Vol</th>${doms.map(d=>`<th>${esc(d)}</th>`).join('')}</tr>`;
+  $('grid').innerHTML = REPORT.grid.rows.map(r=>{
+    const nums=doms.map(d=>r.pos[d]).filter(v=>typeof v==='number');
+    const best=nums.length?Math.min(...nums):null;
+    const cells=doms.map(d=>{
+      const v=r.pos[d];
+      if(v==null) return '<td class="flat">—</td>';
+      const win=(v===best);
+      return `<td class="${win?'up':''}"${win?' style="background:var(--green-bg);font-weight:700"':''}>${v}</td>`;
+    }).join('');
+    return `<tr><td class="l"><b>${esc(r.kw)}</b></td><td>${r.vol.toLocaleString()}</td>${cells}</tr>`;
+  }).join('');
+})();
 
 (() => {
   const max = Math.max(...REPORT.sov.map(s=>s.v));
