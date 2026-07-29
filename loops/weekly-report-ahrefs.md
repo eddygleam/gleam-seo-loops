@@ -221,6 +221,13 @@ brand → social → sweepstakes → contests → competitions → giveaways. Ex
 commercial keyword this run renders a one-line note ("no ranking terms this run") rather than an
 empty table (Rule 3) — an empty pillar is itself a finding: a coverage gap worth a queue item.
 
+Seed the **gleam vs (competitors)** and **competitions** pillars from the project's Google Ads
+target keyword database in Drive — `Competitors-Keywords_list_*.csv` and the keyword-export whose
+campaigns map to the pillars (`Core KW | Competitor | Global`, `Core KW | Competitions | Global`).
+For each targeted term, show gleam.io's organic position from Ahrefs (`site-explorer-organic-keywords`,
+where-filter, no `date_compared` so keyword text populates), or `—` when we target it in Ads but do
+not rank organically. That `—` is the point: a paid-only term with no organic coverage is the gap.
+
 Sections 05 and 06 have no data source in this configuration. Render them with a clear
 "not pulled this run — requires GA4" note rather than omitting them, so the structure stays
 stable week to week.

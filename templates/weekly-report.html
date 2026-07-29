@@ -792,7 +792,7 @@ $('lost').innerHTML = REPORT.lost.map(r => `<tr>
       const d = k.was - k.now;
       const chg = d>0 ? `<span class="up">▲ ${d}</span>` : d<0 ? `<span class="dn">▼ ${-d}</span>` : '<span class="flat">·</span>';
       return `<tr><td class="l"><b>${esc(k.kw)}</b></td><td>${k.was}</td><td>${k.now}</td><td>${chg}</td>
-        <td>${k.vol.toLocaleString()}</td><td class="l mono">${esc(k.url)}</td></tr>`;
+        <td>${typeof k.vol==='number'?k.vol.toLocaleString():'—'}</td><td class="l mono">${esc(k.url)}</td></tr>`;
     }).join('');
     return `<div style="border:1px solid var(--line);border-radius:10px;margin:8px 0;background:var(--panel)">
       <button data-c="${ci}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:12px 15px;font-family:inherit;font-size:14px;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px">
