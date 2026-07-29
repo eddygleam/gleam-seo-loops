@@ -47,6 +47,34 @@ Terms containing "gleam" are brand, not conquest. "rafflecopter alternative" is 
 Exclude as irrelevant intent: software giveaway, software giveaways, free software, giveaway
 of the day, steam key, nft giveaway, crypto giveaway.
 
+## Rule 3 — every section renders populated; never a bare table
+
+No section may ship as a table with only a header and no body. Each section has a primary source
+and an **Ahrefs fallback**; pull the fallback whenever the primary is unavailable. Only if a
+genuine tool call returns zero rows may a section replace its table with a one-line callout naming
+the exact tool called and why it came back empty — a blank table is a defect, an explained gap is
+acceptable. Per section:
+
+- **05 Revenue** — GA4 if connected; else Ahrefs top pages by organic traffic value
+  (`gsc-pages` / `site-explorer-top-pages`, using `traffic_value`).
+- **06 Referral** — GA4 if connected; else the Ahrefs backlink profile:
+  `site-explorer-referring-domains` (domain, DR, dofollow/links_to_target, filtered `is_spam=false`)
+  plus `site-explorer-anchors` for anchor text. Revenue/session columns read "—" until GA4 is
+  connected; the domains, DR, links and anchors are real.
+- **07 Brand** — paid table: Google Ads keyword-level via Zapier; if the account returns nothing,
+  show the campaign-level row built from the six pulled figures (never a blank table). Brand SERP:
+  `serp-overview` for "gleam alternatives" and "gleam alternative" (organic rows → domain, position,
+  DR, page type; gleam.io's own row flagged). Brand-modifier bidding: the paid rows (`type` = paid)
+  from those same `serp-overview` calls; if none, one line "no paid brand-modifier bidders detected
+  this run".
+- **08 Competition** — SoV from `site-explorer-organic-competitors`; **displacement** from the
+  competitor grid (any tracked keyword where a competitor outranks gleam.io — e.g. contest software,
+  contest platform); new pages from competitor metrics.
+- **09 AI search** — Brand Radar (`brand-radar-*`) if a report is configured; else the AEO-readiness
+  signal from branded-entity #1 rankings, clearly labelled as such.
+
+Populate every section from a real pull, label the source, and never leave a header with no rows.
+
 ## Step 1 — Ahrefs, Search Console data
 
 **Use `project_id: 684395`** — "Gleam.io Main", verified, subdomains mode. Confirmed to have

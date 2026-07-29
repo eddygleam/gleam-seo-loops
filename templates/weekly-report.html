@@ -822,10 +822,10 @@ $('brnote').innerHTML = REPORT.brand.note;
 $('brpaid').innerHTML = REPORT.brand.paid.map(r => `<tr>
   <td class="l"><b>${esc(r.kw)}</b></td>
   <td>A$${r.spend.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-  <td>${r.clicks.toLocaleString('en-AU')}</td><td>${r.conv.toFixed(1)}</td>
+  <td>${typeof r.clicks==='number'?r.clicks.toLocaleString('en-AU'):'—'}</td><td>${typeof r.conv==='number'?r.conv.toFixed(1):'—'}</td>
   <td>${r.cpa?'A$'+r.cpa.toFixed(2):'—'}</td>
-  <td class="${r.roas>=1?'up':r.roas===0?'dn':''}">${r.roas.toFixed(2)}</td>
-  <td class="${r.is<50?'dn':r.is>=75?'up':''}">${r.is.toFixed(1)}%</td>
+  <td class="${r.roas>=1?'up':r.roas===0?'dn':''}">${typeof r.roas==='number'?r.roas.toFixed(2):'—'}</td>
+  <td class="${r.is<50?'dn':r.is>=75?'up':''}">${typeof r.is==='number'?r.is.toFixed(1)+'%':'—'}</td>
   <td class="l">${esc(r.verdict)}</td><td class="l mono">${esc(r.fix)}</td></tr>`).join('');
 $('brpaidsrc').textContent = REPORT.brand.paidsrc;
 $('brserp').innerHTML = REPORT.brand.serp.map(r => `<tr${r.threat==='ours'?' style="background:var(--green-bg)"':''}>
@@ -855,14 +855,15 @@ const atype = t => t==='commercial' ? '<span class="b g">commercial</span>'
   : t==='brand' ? '<span class="b n">brand</span>' : '<span class="b a">naked URL</span>';
 $('refkpis').innerHTML = kpiCards(REPORT.ref.kpis);
 $('reftable').innerHTML = REPORT.ref.rows.map(r => {
-  const rps = r.rev / r.sess;
+  const hasRev = typeof r.rev==='number' && typeof r.sess==='number' && r.sess>0;
+  const rps = hasRev ? r.rev/r.sess : null;
   return `<tr>
     <td class="l mono">${esc(r.dom)}</td>
     <td class="l"><b>${esc(r.anchor)}</b></td>
     <td class="l">${atype(r.type)}</td>
-    <td>${r.sess.toLocaleString('en-AU')}</td>
-    <td><b>A$${r.rev.toLocaleString('en-AU')}</b></td>
-    <td class="${rps>=2?'up':rps<1?'dn':''}">A$${rps.toFixed(2)}</td>
+    <td>${typeof r.sess==='number'?r.sess.toLocaleString('en-AU'):'—'}</td>
+    <td><b>${typeof r.rev==='number'?'A$'+r.rev.toLocaleString('en-AU'):'—'}</b></td>
+    <td class="${rps!=null&&rps>=2?'up':rps!=null&&rps<1?'dn':''}">${rps!=null?'A$'+rps.toFixed(2):'—'}</td>
     <td>${r.dr}</td><td>${r.links}</td>
     <td class="l mono">${esc(r.page)}</td></tr>`;
 }).join('');
