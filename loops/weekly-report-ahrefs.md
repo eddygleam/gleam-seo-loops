@@ -185,39 +185,38 @@ attachment is the report** — not a canvas, not a link. This report contains in
 and strategy, so **never publish it to a public URL** (no GitHub Pages, no public link); a native
 Slack file stays inside the workspace.
 
-The loop does **not** upload the file to Slack directly — that path does not work with the
-available connectors, and this was verified by testing:
+The loop uploads the file itself using Slack's **external upload flow** (the modern replacement
+for the deprecated `files.upload`). This was verified working end to end; do NOT use the dead
+ends below, all of which were tested and fail:
 
-- The Slack MCP connector has **no file-upload tool**.
-- Zapier's `channel_message` `file` field, given inline HTML, stores a **`.txt` binary**
-  (`application/octet-stream`) that Slack will not render — not an `.html`.
-- Slack `files.upload` (the API that sets `filetype=html`) returns **`method_deprecated`** on
-  this workspace.
-- A private Drive URL handed to the `file` field is **not fetchable** by Zapier (no auth), and
-  the Drive connector here exposes no "share link" action to make it fetchable.
+- Slack MCP connector — **no file-upload tool**.
+- Zapier `channel_message` `file` field with inline HTML → Slack stores a **`.txt` binary**
+  (`application/octet-stream`), not an `.html`.
+- Slack `files.upload` → **`method_deprecated`** on this workspace.
+- Private Drive URL handed to Zapier's `file` field → **not fetchable** (no auth).
 
-Instead, split the work: the **loop writes the file to Drive**, and a **standing Zapier Zap posts
-it** (this is how the team's older `gleam-*.html` reports are delivered — Zapier's authenticated
-Drive step hands Slack a real `.html`, which renders on click).
+**Working upload — three steps.** Channel `#seo` is `C08F23HCDQA`.
 
-1. **Write `report.html` to Drive.** Use `mcp__Google_Drive__create_file` with
-   `contentMimeType: text/html`, `disableConversionToGoogleType: true`, `title:
-   SEO-<ISO week>.html`, into the folder `Gleam SEO reports`. You hold the rendered HTML in
-   context from the render step; pass it as `textContent`. This file is both the archive and the
-   source the Zap posts.
+1. **Get an upload URL** (Zapier `_zap_raw_request`, `SlackCLIAPI`, which injects the Slack
+   token): `POST https://slack.com/api/files.getUploadURLExternal` with querystring
+   `filename=Gleam-SEO-<ISO week>.html` and `length=<exact byte size of report.html>` (use
+   `wc -c`). It returns `upload_url` and `file_id`.
 
-2. **The standing Zap posts it to `#seo`.** A Zap watches that Drive folder and posts the new
-   file as a native `.html` attachment in `#seo` (channel `C08F23HCDQA`) with a summary comment.
-   The loop does not call Slack for the report file. *(One-time setup, in the Zapier UI: trigger
-   **Google Drive → New File in Folder** = `Gleam SEO reports`; action **Slack → Send Channel
-   Message**, Channel `#seo`, File mapped to the trigger's file, Message = the summary. If this
-   Zap does not yet exist, the report will land in Drive but not auto-post until it is created.)*
+2. **Push the bytes** with Bash `curl` — the file is read straight from disk, so size is a
+   non-issue: `curl -sS -X POST --data-binary @report.html -H "Content-Type: text/html"
+   "<upload_url>"`. (`_zap_raw_request` is locked to the `slack.com` domain and CANNOT post to
+   the `files.slack.com` upload URL — that is why the byte push must go through `curl`, not
+   Zapier.)
 
-3. **Post the summary text in `#seo` yourself** (via `slack_send_message`): the single biggest
-   finding, the P1/P2 count, and the Linear IDs (MAR-####). Keep it to plain text with bare
-   auto-linked URLs — never a hand-built `<url|label>` link with a line break inside it (that
-   produced a broken link in testing). This guarantees the channel has the headline even if the
-   file-posting Zap is not yet wired.
+3. **Finalize and share to `#seo`** (Zapier `_zap_raw_request`):
+   `POST https://slack.com/api/files.completeUploadExternal` with querystring
+   `files=[{"id":"<file_id>","title":"Gleam-SEO-<ISO week>.html"}]`, `channel_id=C08F23HCDQA`,
+   and `initial_comment=<the summary: biggest finding · P1/P2 count · Linear MAR-#### ids>`.
+   Confirm the response is `ok:true`. Slack renders the `.html` on click.
+
+4. **Archive to Drive.** Also write the same `Gleam-SEO-<ISO week>.html` to the Drive folder
+   `Gleam SEO reports` (`mcp__Google_Drive__create_file`, `contentMimeType: text/html`,
+   `disableConversionToGoogleType: true`) as the durable archive and for next week's diff.
 
 **DM heads-up to Eddy** — three lines: the single most important finding, the P1/P2 count, and
 "report attached in #seo". Not the report itself.
