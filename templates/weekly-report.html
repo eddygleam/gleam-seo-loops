@@ -165,11 +165,11 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
 
 <!-- 05 REVENUE -->
 <section>
-  <div class="snum">05 · REVENUE</div>
-  <h2>Top organic revenue pages, with the query earning it</h2>
+  <div class="snum">05 · ORGANIC VALUE</div>
+  <h2>Top organic pages by traffic value, with the query earning it</h2>
   <div class="kpis" id="revkpis"></div>
   <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Landing page</th><th>Revenue</th><th>Sessions</th><th>Rev/session</th>
+    <th class="l">Landing page</th><th>Value/wk</th><th>Organic visits</th><th>Value/visit</th>
     <th class="l">Primary query</th><th>Pos</th><th>Clicks</th><th class="l">Read</th>
   </tr></thead><tbody id="revtable"></tbody></table></div>
   <div class="callout" id="revnote"></div>
@@ -178,8 +178,8 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
 
 <!-- 06 REFERRALS -->
 <section>
-  <div class="snum">06 · REFERRAL REVENUE</div>
-  <h2>Which backlinks earn money, and what anchor text they use</h2>
+  <div class="snum">06 · REFERRING DOMAINS</div>
+  <h2>Which sites link to Gleam, and what anchor text they use</h2>
   <div class="kpis" id="refkpis"></div>
   <div style="overflow-x:auto"><table><thead><tr>
     <th class="l">Referring domain</th><th class="l">Dominant anchor</th><th class="l">Anchor type</th>
@@ -191,36 +191,23 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
 
 <!-- 07 BRAND -->
 <section>
-  <div class="snum">07 · BRAND</div>
-  <h2>Branded search — ownership, attackers and revenue</h2>
+  <div class="snum">07 · BRAND DEFENCE</div>
+  <h2>Branded search — organic ownership and the alternatives SERP</h2>
   <div class="kpis" id="brkpis"></div>
-  <div class="callout red" id="brnote"></div>
-
-  <h3>Brand paid performance — 90 days, from the account</h3>
-  <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Brand keyword</th><th>Spend</th><th>Clicks</th><th>Conv</th><th>CPA</th><th>ROAS</th>
-    <th>Impr share</th><th class="l">Verdict</th><th class="l">Fix at</th>
-  </tr></thead><tbody id="brpaid"></tbody></table></div>
-  <p class="src" id="brpaidsrc"></p>
+  <div class="callout amber" id="brnote"></div>
 
   <h3>Who owns the "gleam alternative" SERP — organic</h3>
   <div style="overflow-x:auto"><table><thead><tr>
     <th>Pos</th><th class="l">Domain</th><th class="l">URL</th><th class="l">Page type</th><th class="l">Threat</th>
   </tr></thead><tbody id="brserp"></tbody></table></div>
-
-  <h3>Who bids on brand-modifier terms — 12 months</h3>
-  <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Advertiser</th><th class="l">Category</th><th>Best ad position</th><th class="l">Last seen</th><th class="l">Reads as</th>
-  </tr></thead><tbody id="brattack"></tbody></table></div>
-
-  <div class="callout amber" id="brdata"></div>
 </section>
 
 <!-- 08 COMPETITORS -->
 <section>
   <div class="snum">08 · COMPETITION</div>
-  <h2>Share of voice on the commercial keyword set</h2>
+  <h2>Share of organic traffic — direct contest &amp; giveaway platforms</h2>
   <div id="sov"></div>
+  <p class="src">Share of estimated organic search traffic (Ahrefs, US) across the direct contest &amp; giveaway <b>platform</b> set, with gleam.io as the self row. Giveaway-listing aggregators (app-sorteos, thefreebieguy) pull more raw traffic but serve a directory audience; they appear in the competitor grid, not here.</p>
   <h3>Direct displacement — they gained the same week we lost</h3>
   <div style="overflow-x:auto"><table><thead><tr>
     <th class="l">Keyword</th><th class="l">Competitor</th><th>Their move</th><th>Our move</th><th>CPC</th><th class="l">Response</th><th class="l">Build at</th>
@@ -251,24 +238,37 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
   <div style="overflow-x:auto"><table><thead><tr>
     <th class="l">Commercial keyword</th><th class="l">AI Overview</th><th class="l">Gleam cited</th><th class="l">Who is cited</th><th class="l">Action</th><th class="l">Implement at</th>
   </tr></thead><tbody id="aitable"></tbody></table></div>
+  <div class="callout amber">
+    <b>Why this section can read "Not configured", and what turns it on.</b> AI Overview / LLM-answer tracking is not a
+    Search Console or Site Explorer metric, so it cannot be back-filled from the pulls above. Two Ahrefs features enable it:
+    <ol style="margin:8px 0 0 18px;padding:0">
+      <li><b>Brand Radar report</b> (recommended) — a report for the <span class="mono">gleam</span> entity with the
+      commercial prompts; it measures AI-answer mentions, citation share and share of voice. Check
+      management-brand-radar-reports — if it returns empty, none exists yet.</li>
+      <li><b>Rank Tracker AI-Overview flag</b> — add the commercial keyword set to a Rank Tracker project; each keyword
+      then reports the <span class="mono">ai_overview</span> / <span class="mono">ai_overview_found</span> SERP feature
+      and whether gleam.io is cited.</li>
+    </ol>
+    Until one is set up, the KPIs above are the AEO-readiness proxy (entity + informational #1s) from ranking data.
+  </div>
 </section>
 
 <!-- 10 ACTION QUEUE -->
 <section>
   <div class="snum">10 · WHERE TO MAKE CHANGES</div>
   <h2>Action queue</h2>
-  <p>Every item below was produced by a rule in <code class="mono">report-config.json</code>, not by judgement. Priority 1 and 2 items are opened as Linear issues automatically and de-duplicated on title.</p>
+  <p>Every item below was produced by a rule, not by judgement. Before anything is recommended the queue is checked against Linear (team Marketing, label SEO): items already open or explicitly declined last week are shown as tracked/declined, not re-raised.</p>
   <div id="queue"></div>
 </section>
 
 <!-- 11 INFORMATIONAL -->
 <section>
   <div class="snum">11 · INFORMATIONAL TRACK</div>
-  <h2>Guides, how-tos and ideas</h2>
-  <p>Measured on impressions and citation share, never on traffic value — otherwise a guide's 4,000 impressions drowns out a top-3 commercial term moving one place.</p>
+  <h2>Guides &amp; how-tos — is the existing content being cannibalised?</h2>
+  <p>Before proposing new content the loop checks Directus for what already exists; if a guide already covers the term the question is whether its own keyword is being cannibalised, and how to fix it. Measured on impressions and rank, never traffic value.</p>
   <div class="kpis" id="infokpis"></div>
   <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Page</th><th>Impr Δ 3wk</th><th>Clicks Δ</th><th>Weeks declining</th><th class="l">Verdict</th>
+    <th class="l">Query</th><th>Impressions</th><th>Gleam position</th><th class="l">URL Google shows</th><th class="l">Diagnosis &amp; fix</th>
   </tr></thead><tbody id="infotable"></tbody></table></div>
   <div class="callout amber" id="infopaid"></div>
 </section>
@@ -892,22 +892,9 @@ const threatBadge = t => ({critical:'<span class="b r">critical</span>', high:'<
   ours:'<span class="b g">ours</span>'}[t] || t);
 $('brkpis').innerHTML = kpiCards(REPORT.brand.kpis);
 $('brnote').innerHTML = REPORT.brand.note;
-$('brpaid').innerHTML = REPORT.brand.paid.map(r => `<tr>
-  <td class="l"><b>${esc(r.kw)}</b></td>
-  <td>A$${r.spend.toLocaleString('en-AU',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
-  <td>${typeof r.clicks==='number'?r.clicks.toLocaleString('en-AU'):'—'}</td><td>${typeof r.conv==='number'?r.conv.toFixed(1):'—'}</td>
-  <td>${r.cpa?'A$'+r.cpa.toFixed(2):'—'}</td>
-  <td class="${r.roas>=1?'up':r.roas===0?'dn':''}">${typeof r.roas==='number'?r.roas.toFixed(2):'—'}</td>
-  <td class="${r.is<50?'dn':r.is>=75?'up':''}">${typeof r.is==='number'?r.is.toFixed(1)+'%':'—'}</td>
-  <td class="l">${esc(r.verdict)}</td><td class="l mono">${esc(r.fix)}</td></tr>`).join('');
-$('brpaidsrc').textContent = REPORT.brand.paidsrc;
 $('brserp').innerHTML = REPORT.brand.serp.map(r => `<tr${r.threat==='ours'?' style="background:var(--green-bg)"':''}>
   <td>${r.pos}</td><td class="l"><b>${esc(r.dom)}</b></td><td class="l mono">${esc(r.url)}</td>
   <td class="l">${esc(r.type)}</td><td class="l">${threatBadge(r.threat)}</td></tr>`).join('');
-$('brattack').innerHTML = REPORT.brand.attack.map(r => `<tr>
-  <td class="l"><b>${esc(r.c)}</b></td><td class="l">${esc(r.cat)}</td><td>${r.pos}</td>
-  <td class="l">${esc(r.last)}</td><td class="l">${esc(r.reads)}</td></tr>`).join('');
-$('brdata').innerHTML = REPORT.brand.datagap;
 
 $('revkpis').innerHTML = kpiCards(REPORT.rev.kpis);
 $('revtable').innerHTML = REPORT.rev.rows.map(r => {

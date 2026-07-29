@@ -3,15 +3,21 @@
 Paste everything below the line into the prompt field of a weekly Routine.
 
 Connectors required — all present in the cloud session:
-**Ahrefs, Google Drive, Slack, Linear, Zapier.** There is no native Search Console, Google Ads,
-GA4 or Semrush connector: Search Console data comes from Ahrefs, and **Google Ads is reached
-through Zapier**. Nothing in this report is entered by hand — every figure is pulled by a tool.
+**Ahrefs, Google Drive, Slack, Linear, Directus, Zapier.** Search Console data comes from Ahrefs.
+This is an organic report: there is **no paid-ads and no GA4 data** in it — GA4 is not connected
+and is not reachable through Ahrefs, so never present GA4 revenue or imply it is wired up.
+Directus is used to check whether informational content already exists (§11). Nothing in this
+report is entered by hand — every figure is pulled by a tool.
 
 ---
 
-You are producing the weekly SEO report for gleam.io. Deliver it as a Slack canvas plus a
-direct message to Eddy, and open Linear issues for the priority actions. Be terse in the
-session itself; the deliverable is the canvas, not commentary.
+You are producing the weekly SEO report for gleam.io. **This report is ORGANIC COMMERCIAL
+only** — organic search performance for Gleam's commercial keyword set. It is NOT a paid-ads
+report and NOT a GA4 report: do not present Google Ads spend/ROAS/impression-share as the
+report's subject, and do not imply GA4 is connected (it is not, and GA4 is not wired through
+Ahrefs). Deliver the report as a rendered HTML file in a **direct message to Eddy**
+(`D0BMAL0MZMW`), and open Linear issues for the priority actions. Be terse in the session
+itself; the deliverable is the HTML file, not commentary.
 
 ## Rule 0 — never report a number you did not pull
 
@@ -35,10 +41,12 @@ slug, or a system such as "Google Ads → Gleam - Brand campaign". No `where`, n
 
 ## Rule 2 — three tracks, never mixed in one average
 
-- **Brand** — anything containing "gleam". Scored on position and SERP ownership. `gleam`
+All three tracks are **organic**. There is no paid track in this report.
+
+- **Brand** — anything containing "gleam". Scored on organic position and SERP ownership. `gleam`
   alone is ~10,000 weekly impressions and would swamp any average it sits inside.
 - **Commercial** — software, platform, app, tool, picker, generator, maker, websites, plus
-  action phrasings (run a / host a / create a). Scored on estimated traffic value.
+  action phrasings (run a / host a / create a). Scored on estimated organic traffic value.
 - **Informational** — ideas, examples, how to, rules, legal. Scored on impressions.
 
 Terms containing "gleam" are brand, not conquest. "rafflecopter alternative" is conquest;
@@ -55,23 +63,35 @@ genuine tool call returns zero rows may a section replace its table with a one-l
 the exact tool called and why it came back empty — a blank table is a defect, an explained gap is
 acceptable. Per section:
 
-- **05 Revenue** — GA4 if connected; else Ahrefs top pages by organic traffic value
-  (`gsc-pages` / `site-explorer-top-pages`, using `traffic_value`).
-- **06 Referral** — GA4 if connected; else the Ahrefs backlink profile:
+- **05 Organic value** (NOT "revenue") — Ahrefs top pages by organic traffic value
+  (`gsc-pages` / `site-explorer-top-pages`, using `traffic_value`). Label it *organic traffic
+  value*, an Ahrefs estimate — never call it booked revenue, and never imply GA4 is connected.
+  Column headers are Value/wk, Organic visits, Value/visit.
+- **06 Referring domains** (NOT "referral revenue") — the Ahrefs backlink profile:
   `site-explorer-referring-domains` (domain, DR, dofollow/links_to_target, filtered `is_spam=false`)
-  plus `site-explorer-anchors` for anchor text. Revenue/session columns read "—" until GA4 is
-  connected; the domains, DR, links and anchors are real.
-- **07 Brand** — paid table: Google Ads keyword-level via Zapier; if the account returns nothing,
-  show the campaign-level row built from the six pulled figures (never a blank table). Brand SERP:
-  `serp-overview` for "gleam alternatives" and "gleam alternative" (organic rows → domain, position,
-  DR, page type; gleam.io's own row flagged). Brand-modifier bidding: the paid rows (`type` = paid)
-  from those same `serp-overview` calls; if none, one line "no paid brand-modifier bidders detected
-  this run".
-- **08 Competition** — SoV from `site-explorer-organic-competitors`; **displacement** from the
-  competitor grid (any tracked keyword where a competitor outranks gleam.io — e.g. contest software,
-  contest platform); new pages from competitor metrics.
-- **09 AI search** — Brand Radar (`brand-radar-*`) if a report is configured; else the AEO-readiness
-  signal from branded-entity #1 rankings, clearly labelled as such.
+  plus `site-explorer-anchors` for anchor text. There is no GA4 connector, so session/revenue
+  columns read "—"; the domains, DR, links and anchors are real. Do not frame this as revenue.
+- **07 Brand defence (ORGANIC)** — no paid table, ever. Brand SERP: `serp-overview` for
+  "gleam alternatives" and "gleam alternative" (organic rows → domain, position, DR, page type;
+  gleam.io's own row flagged). KPIs are organic: brand queries owned at #1, the brand-head CTR gap
+  (§04), and gleam.io's own rank on "gleam alternatives". The finding is the organic alternatives
+  SERP owned by third-party comparison pages — recommend an owned comparison page + homepage
+  authority, never a bid change.
+- **08 Competition — Share of Voice must include gleam.io.** Compute SoV as each domain's share
+  of estimated organic traffic across the **direct contest/giveaway platform set** (gleam.io +
+  sweepwidget, viralsweep, woobox, easypromosapp, rafflepress), traffic from
+  `site-explorer-organic-competitors` + `site-explorer-metrics` (org_traffic). gleam.io is the
+  self row (typically the leader, ~55%). Note that giveaway-listing aggregators (app-sorteos,
+  thefreebieguy) have larger raw traffic but a directory audience — keep them out of the platform
+  SoV and in the competitor grid. **Displacement** from the competitor grid (any tracked keyword
+  where a competitor outranks gleam.io — e.g. contest software, contest platform).
+- **09 AI search** — check `management-brand-radar-reports` first. If a Brand Radar report exists,
+  read `brand-radar-*` for AI-answer mentions / citation share / SoV. If none exists (currently 0),
+  the section renders "Not configured" **and states what to enable**: (a) a Brand Radar report for
+  the `gleam` entity with the commercial prompts, or (b) the commercial keyword set added to a Rank
+  Tracker project so each keyword reports the `ai_overview` / `ai_overview_found` SERP feature.
+  Until then the KPIs are the AEO-readiness proxy (branded-entity + informational #1s), labelled
+  as such. Never imply AI Overview presence is being measured when it is not.
 
 Populate every section from a real pull, label the source, and never leave a header with no rows.
 
@@ -132,49 +152,27 @@ improvement, since Semrush position data was found to contradict Search Console 
 Also pull `site-explorer-organic-competitors`, `serp-overview` for the top movers and brand
 modifier terms, and `site-audit-issues` filtered to commercial URLs.
 
-## Step 4 — brand paid, pulled from Google Ads via Zapier
+## Step 4 — organic brand defence (NO paid ads)
 
-No native Google Ads connector, but **Zapier reaches it** — account **9047806202**, AUD. Pull it
-with a tool; do not paste anything by hand and do not read a manual file.
+This report does not include Google Ads spend, ROAS or impression share. Do not pull, and do not
+present, any paid-search figures — the previous paid-brand block was removed because it mixes
+objectives (the user was explicit: this is organic commercial, not paid ads).
 
-Use the Zapier Google Ads actions (call `inspect_zapier_actions` for their exact parameters):
+Pull the **organic** brand-defence picture instead:
 
-- **Campaign metrics** — `google_ads_create_report`, resource `campaign`, dates `LAST_7_DAYS`,
-  account 9047806202. Needs spend, conversions, conversions value (→ ROAS) and, critically,
-  `search_rank_lost_impression_share` and `search_budget_lost_impression_share`. If the Create
-  Report column set omits the impression-share metrics, fall back to raw GAQL via
-  `google_ads_make_api_get_request` / `..._mutating_request` against
-  `customers/9047806202/googleAds:search`:
+- `serp-overview` for "gleam alternatives" and "gleam alternative" — organic rows only: domain,
+  position, DR, page type, and gleam.io's own row flagged. The finding is which third-party
+  comparison pages (rafflepress, bloggingwizard, Reddit, Capterra…) outrank Gleam's homepage on
+  its own alternatives SERP.
+- `gsc-keywords` filtered to brand terms — the brand-head CTR gap (e.g. `gleam` ~10.5% vs ~33%
+  benchmark) and brand-query cannibalisation (urls_count) — both already in §04.
 
-  ```sql
-  SELECT campaign.name, metrics.cost_micros, metrics.conversions, metrics.conversions_value,
-         metrics.search_rank_lost_impression_share, metrics.search_budget_lost_impression_share
-  FROM campaign WHERE segments.date DURING LAST_7_DAYS
-  ```
-  Cost is micros — divide by 1,000,000. GAQL has no `LAST_90_DAYS` literal; for the 90-day view
-  use `segments.date BETWEEN '<90 days ago>' AND '<yesterday>'`.
+The recommendation is always organic: an owned gleam-alternatives comparison page, homepage
+authority signals, brand-query consolidation. Never a bid change.
 
-- **Conquest CPA** — the same query narrowed to the Competitors campaign (`campaign.name`).
-
-Reduce the pull to exactly these six values and hand them to the report as its brand-paid block:
-`brand_spend_aud`, `brand_conversions`, `brand_roas`, `brand_rank_lost_is_pct`,
-`brand_budget_lost_is_pct`, `conquest_cpa_aud`. **Any value the pull does not return renders
-"not pulled this run" — never inferred, never carried forward (Rule 0).** If the Zapier Google
-Ads connection is unauthorised (a token error), say so in the method section and leave the six
-fields empty; do not fall back to a hand-typed number.
-
-Baselines from 2026-07-28 for sanity-checking: brand spend A$4,700, CPA A$41.69, ROAS 0.92,
-rank-lost 45.2%, budget-lost 3.3%, conquest CPA A$244.35. If the pulled figures contradict these
-without obvious cause, suspect the pull and flag it rather than reporting it silently.
-
-The rank-lost versus budget-lost distinction is the single most valuable number in this report:
-rank-lost means outranked, budget-lost means out of money, and they need opposite responses. Say
-so whenever it is present.
-
-*(GA4 — sections 05 and 06.)* There is no GA4 connector today. GA4 is available in Zapier's
-catalogue (`Google Analytics 4`) but not yet connected; once it is, organic revenue by landing
-page and referral revenue can be pulled the same way. Until then, render 05 and 06 as
-"not pulled this run — requires GA4".
+*(Sections 05 and 06.)* There is no GA4 connector, and GA4 is **not** reachable through Ahrefs.
+Render 05 as organic traffic value (Ahrefs, §Rule 3) and 06 as the referring-domains backlink
+profile. Never state or imply that GA4 is connected or that these are booked revenue figures.
 
 ## Step 5 — build the report, all 12 sections
 
@@ -183,9 +181,10 @@ including the diverging value-change chart in section 02. Do not produce a short
 a previous run emitted an 8-section variant and it was rejected.
 
 The sections are: 01 scorecard · 02 what moved (diverging value chart) · 03 movers with
-diagnosis · 04 flags, cannibalisation and CTR gap · 05 revenue · 06 referral revenue ·
-07 brand · 08 competition · 08 competitor grid · 09 AI search · 10 where to make changes ·
-11 informational track · 12 method and run log.
+diagnosis · 04 flags, cannibalisation and CTR gap · 05 organic value · 06 referring domains ·
+07 brand defence (organic) · 08 competition (share of voice incl. gleam.io) · 08 competitor grid ·
+09 AI search · 10 where to make changes (Linear-deduped) · 11 informational track (diagnose
+existing content) · 12 method and run log. All organic — no paid-ads section.
 
 **Section 08 competitor grid** is a Semrush-style Position-Tracking add-on kept **in addition to**
 the existing sections — it never replaces 02–04. Fixed competitor set
@@ -228,14 +227,38 @@ For each targeted term, show gleam.io's organic position from Ahrefs (`site-expl
 where-filter, no `date_compared` so keyword text populates), or `—` when we target it in Ads but do
 not rank organically. That `—` is the point: a paid-only term with no organic coverage is the gap.
 
-Sections 05 and 06 have no data source in this configuration. Render them with a clear
-"not pulled this run — requires GA4" note rather than omitting them, so the structure stays
-stable week to week.
+Sections 05 and 06 are organic (traffic value; referring domains) per Rule 3 — never framed as
+revenue and never implying GA4 is connected.
 
-Build the action queue from the rules: on-page for commercial positions 4–8, internal links
-for 9–15, consolidate on cannibalisation, metadata rewrite on CTR gap, brand defence for any
-brand term worse than position 3, and new-page briefs for commercial terms with no ranking.
-Every item carries its `where`.
+**Section 11 informational — check Directus for existing content before proposing anything new.**
+For each informational term that surfaced (how-to, guide, "what is", rules), query Directus
+(`Blog_Post` and `Article` where `type` in guides/modern_blog; the slug field on `Article` is
+`slug`, on `Blog_Post` it is `url` — `slug` does NOT exist on `Blog_Post`) to see whether a page
+already exists. If it does, the recommendation is **not** "write a guide" — it is a diagnosis of
+whether that page's keyword is being cannibalised and how to fix it: pull `gsc-keywords` for the
+term and check `top_url`. If Google shows a different URL (e.g. the product page /app/competitions
+or the homepage) instead of the guide, that is the finding — recommend consolidating the
+informational intent onto the existing guide (internal link with exact anchor, canonical intent,
+keep the product page on the commercial term). Worked example: the "How to Create a Social Media
+Contest" guide (Directus Article 4904, /guides/how-to-create-a-social-media-contest) exists and is
+published, but "how to create a social media contest" is won by /app/competitions (#8.1) — so the
+action is de-cannibalisation, not a new guide.
+
+**Section 10 action queue — check Linear first, then build from the rules.** Before recommending
+anything, list Linear issues (team **Marketing**, label **SEO**) and de-duplicate against them so
+the queue never re-recommends work already implemented, queued, or explicitly declined the prior
+week:
+- If an open issue already covers the action (matched on the page/keyword, not just title), show
+  it as **tracked** (e.g. "already queued — MAR-####, assigned <owner>") and do not raise a
+  duplicate.
+- If the action was raised last week and **Cancelled** (e.g. MAR-1509 homepage metadata), show it
+  as **declined — not re-raised**; only re-open if the underlying decision changed.
+- Only genuinely new actions become fresh Linear issues.
+Then build the rest from the rules: on-page for commercial positions 4–8, internal links for 9–15,
+consolidate on cannibalisation, metadata rewrite on CTR gap, brand defence (organic) for any brand
+term worse than position 3, de-cannibalisation for informational terms whose existing page is
+outranked by a product/home page, and new-page briefs only for commercial terms with no ranking
+AND no existing Directus page. Every item carries its `where`.
 
 ## Step 6 — snapshot to Drive
 
@@ -247,12 +270,11 @@ Next week's diff depends on this; skip it and every week looks like week one.
 ## Step 7 — deliver
 
 The report people open is the **rendered `report.html`** (from `gleam_seo.render_html` — the
-exact twelve-section template with the diverging chart), delivered as a **native HTML file
-attached to a message in `#seo`**, exactly like the team's older `gleam-*.html` reports. When
-clicked, Slack opens the attachment and the browser renders the full styled page. **The HTML
-attachment is the report** — not a canvas, not a link. This report contains internal paid spend
-and strategy, so **never publish it to a public URL** (no GitHub Pages, no public link); a native
-Slack file stays inside the workspace.
+exact twelve-section template with the diverging chart), delivered as a **native HTML file in a
+direct message to Eddy** (`D0BMAL0MZMW`). When clicked, Slack opens the attachment and the
+browser renders the full styled page. **The HTML attachment is the report** — not a canvas, not
+a link. **Never publish it to a public URL** (no GitHub Pages, no public link); a native Slack
+file stays inside the workspace.
 
 The loop uploads the file itself using Slack's **external upload flow** (the modern replacement
 for the deprecated `files.upload`). This was verified working end to end; do NOT use the dead
@@ -264,31 +286,31 @@ ends below, all of which were tested and fail:
 - Slack `files.upload` → **`method_deprecated`** on this workspace.
 - Private Drive URL handed to Zapier's `file` field → **not fetchable** (no auth).
 
-**Working upload — three steps.** Channel `#seo` is `C08F23HCDQA`.
+**Working upload — three steps.** Deliver to Eddy's DM channel `D0BMAL0MZMW`.
 
 1. **Get an upload URL** (Zapier `_zap_raw_request`, `SlackCLIAPI`, which injects the Slack
    token): `POST https://slack.com/api/files.getUploadURLExternal` with querystring
-   `filename=Gleam-SEO-<ISO week>.html` and `length=<exact byte size of report.html>` (use
+   `filename=GleamSEO-<ISO week>.html` and `length=<exact byte size of report.html>` (use
    `wc -c`). It returns `upload_url` and `file_id`.
 
 2. **Push the bytes** with Bash `curl` — the file is read straight from disk, so size is a
-   non-issue: `curl -sS -X POST --data-binary @report.html -H "Content-Type: text/html"
-   "<upload_url>"`. (`_zap_raw_request` is locked to the `slack.com` domain and CANNOT post to
-   the `files.slack.com` upload URL — that is why the byte push must go through `curl`, not
-   Zapier.)
+   non-issue: `curl -sS -X POST --data-binary @report.html "<upload_url>"`. (`_zap_raw_request`
+   is locked to the `slack.com` domain and CANNOT post to the `files.slack.com` upload URL —
+   that is why the byte push must go through `curl`, not Zapier.)
 
-3. **Finalize and share to `#seo`** (Zapier `_zap_raw_request`):
+3. **Finalize and share to the DM** (Zapier `_zap_raw_request`):
    `POST https://slack.com/api/files.completeUploadExternal` with querystring
-   `files=[{"id":"<file_id>","title":"Gleam-SEO-<ISO week>.html"}]`, `channel_id=C08F23HCDQA`,
-   and `initial_comment=<the summary: biggest finding · P1/P2 count · Linear MAR-#### ids>`.
-   Confirm the response is `ok:true`. Slack renders the `.html` on click.
+   `files=[{"id":"<file_id>","title":"Gleam SEO — Weekly Report <ISO week>"}]`,
+   `channel_id=D0BMAL0MZMW`, and `initial_comment=<the summary: biggest finding · P1/P2 count ·
+   Linear MAR-#### ids, distinguishing newly-raised from tracked/declined>`. Confirm the
+   response is `ok:true`. Slack renders the `.html` on click.
 
-4. **Archive to Drive.** Also write the same `Gleam-SEO-<ISO week>.html` to the Drive folder
+4. **Archive to Drive.** Also write the same `GleamSEO-<ISO week>.html` to the Drive folder
    `Gleam SEO reports` (`mcp__Google_Drive__create_file`, `contentMimeType: text/html`,
    `disableConversionToGoogleType: true`) as the durable archive and for next week's diff.
 
-**DM heads-up to Eddy** — three lines: the single most important finding, the P1/P2 count, and
-"report attached in #seo". Not the report itself.
+The `initial_comment` on the file is the heads-up — the single most important finding and the
+P1 count. No separate message.
 
 **Linear** — one issue per priority-1 and priority-2 action, **team Marketing**. A task that
 only states a problem is a defect; every issue must be actionable on its own. Each issue MUST
@@ -307,8 +329,11 @@ set:
   4. **Expected impact**: rough upside (clicks or value) where derivable.
   5. **Acceptance**: how we'll know it's done.
 
-De-duplicate on title: if an open issue with that title exists, comment on it instead of
-creating a second. See MAR-1509 for the required shape.
+De-duplicate against the Linear check from §10 (team Marketing, label SEO): match on the
+page/keyword the action targets, not just the title string. If an open issue already covers it,
+comment on it instead of creating a second and show it as *tracked* in the queue; if it was
+Cancelled last week, show it as *declined* and do not recreate it. Only genuinely new actions
+become fresh issues. See MAR-1509 for the required description shape.
 
 **Do not write to Directus.** Content changes go to Linear for a human.
 
