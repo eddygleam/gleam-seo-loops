@@ -200,6 +200,14 @@ the existing sections — it never replaces 02–04. Fixed competitor set
   `{domains:[…5…], rows:[{kw, vol, pos:{"<domain>":best_position}}]}`. A domain absent from a row
   = not ranking (top 100). All positions are Ahrefs crawl, comparable across columns.
 
+**Section 03 also carries a `clusters` block** below the Gained/Lost winners & losers: every
+*remaining* commercial keyword (not already a winner or loser) grouped by theme
+(e.g. giveaway-generic, sweepstakes, contest/giveaway platform, social-media contest). Build
+`clusters: [{name, up, down, flat, net, kws:[{kw, was, now, vol, url}]}]` where `net = Σ(was −
+now)` (positive = net improvement); `up/down/flat` are counts within the cluster. Each cluster
+renders a one-line summary with an expand button that reveals its keyword rows. Assign every
+commercial keyword to exactly one cluster so none are dropped.
+
 Sections 05 and 06 have no data source in this configuration. Render them with a clear
 "not pulled this run — requires GA4" note rather than omitting them, so the structure stays
 stable week to week.

@@ -125,6 +125,10 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
     <th class="l">Keyword</th><th class="l">Cluster</th><th>Was</th><th>Now</th><th>Vol</th><th>CPC</th><th>Δ value</th><th class="l">Diagnosis</th><th class="l">Fix at</th>
   </tr></thead><tbody id="lost"></tbody></table></div>
   <p class="src">Diagnosis is derived, not guessed: a changed ranking URL means cannibalisation rather than a ranking loss; a changed SERP composition means the fix is not on-page.</p>
+
+  <h3>Rest of the commercial set — by cluster</h3>
+  <p>Every other commercial keyword grouped by theme, with net position movement per cluster. Expand a cluster for the individual keywords.</p>
+  <div id="clusters"></div>
 </section>
 
 <!-- 04 FLAGS -->
@@ -354,6 +358,41 @@ const REPORT = {
     { kw:"gleam pricing", cl:"Brand-product", was:8, now:11, vol:"n/a", cpc:4.15, d:-64,
       diag:"Ranking loss — own brand term outside top 10", dtype:"rank",
       url:"/pricing" }
+  ],
+
+  /* 03b — remaining commercial keywords grouped by cluster. net = Σ(was − now), + = improved. */
+  clusters: [
+    { name:"Giveaway — generic & directory", up:1, down:1, flat:7, net:0, kws:[
+      { kw:"giveaway", was:1, now:1, vol:17000, url:"/giveaways" },
+      { kw:"giveaways", was:1, now:2, vol:9900, url:"/giveaways" },
+      { kw:"give away", was:1, now:1, vol:2600, url:"/giveaways" },
+      { kw:"free giveaway", was:1, now:1, vol:800, url:"/giveaways" },
+      { kw:"online giveaway", was:1, now:1, vol:150, url:"/giveaways" },
+      { kw:"win prizes", was:2, now:1, vol:350, url:"/giveaways" },
+      { kw:"giveaway website", was:1, now:1, vol:60, url:"/giveaways" },
+      { kw:"best giveaway websites", was:1, now:1, vol:70, url:"/giveaways" },
+      { kw:"gaming giveaways", was:3, now:3, vol:100, url:"/giveaways" }
+    ]},
+    { name:"Sweepstakes", up:0, down:1, flat:3, net:-1, kws:[
+      { kw:"sweepstakes websites", was:1, now:1, vol:1700, url:"/giveaways" },
+      { kw:"free sweepstakes", was:5, now:6, vol:1500, url:"/giveaways" },
+      { kw:"free sweepstakes websites", was:7, now:7, vol:500, url:"/giveaways" },
+      { kw:"free sweepstakes to enter", was:1, now:1, vol:500, url:"/giveaways" }
+    ]},
+    { name:"Contest & giveaway platform (tool intent)", up:0, down:0, flat:6, net:0, kws:[
+      { kw:"giveaway platform", was:1, now:1, vol:150, url:"/app/competitions" },
+      { kw:"contest platform", was:2, now:2, vol:200, url:"/app/competitions" },
+      { kw:"giveaway creator", was:1, now:1, vol:70, url:"/app/competitions" },
+      { kw:"giveaway manager", was:1, now:1, vol:80, url:"/app/competitions" },
+      { kw:"create a giveaway", was:1, now:1, vol:50, url:"/app/competitions" },
+      { kw:"host a giveaway", was:1, now:1, vol:60, url:"/app/competitions" }
+    ]},
+    { name:"Social media contest / giveaway", up:1, down:0, flat:3, net:2, kws:[
+      { kw:"social media giveaway", was:3, now:1, vol:150, url:"/app/competitions" },
+      { kw:"social media contest", was:1, now:1, vol:350, url:"/app/competitions" },
+      { kw:"social media contest platform", was:1, now:1, vol:150, url:"/app/competitions" },
+      { kw:"social media giveaway tools", was:2, now:2, vol:150, url:"/app/competitions" }
+    ]}
   ],
 
   cannib: [
@@ -737,6 +776,36 @@ $('lost').innerHTML = REPORT.lost.map(r => `<tr>
   <td>$${r.cpc.toFixed(2)}</td><td class="dn">${money(r.d)}</td>
   <td class="l">${dbadge(r.dtype)} ${esc(r.diag)}</td>
   <td class="l mono">${esc(r.url)}</td></tr>`).join('');
+
+/* 03b — remaining commercial keywords grouped by cluster, expandable */
+(() => {
+  const clusters = REPORT.clusters || [];
+  $('clusters').innerHTML = clusters.map((c,ci) => {
+    const badge = c.net>0 ? `<span class="up">▲ +${c.net} pos net</span>`
+      : c.net<0 ? `<span class="dn">▼ ${c.net} pos net</span>`
+      : `<span class="flat">· net flat</span>`;
+    const rows = c.kws.map(k => {
+      const d = k.was - k.now;
+      const chg = d>0 ? `<span class="up">▲ ${d}</span>` : d<0 ? `<span class="dn">▼ ${-d}</span>` : '<span class="flat">·</span>';
+      return `<tr><td class="l"><b>${esc(k.kw)}</b></td><td>${k.was}</td><td>${k.now}</td><td>${chg}</td>
+        <td>${k.vol.toLocaleString()}</td><td class="l mono">${esc(k.url)}</td></tr>`;
+    }).join('');
+    return `<div style="border:1px solid var(--line);border-radius:10px;margin:8px 0;background:var(--panel)">
+      <button data-c="${ci}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:12px 15px;font-family:inherit;font-size:14px;color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <span><span class="cl-caret" style="display:inline-block;width:14px;color:var(--ink-3)">▸</span> <b>${esc(c.name)}</b>
+          <span class="mono" style="font-size:11px;color:var(--ink-3);margin-left:6px">${c.up}▲ ${c.down}▼ ${c.flat}· · ${c.kws.length} kw</span></span>
+        <span class="mono" style="font-size:12px">${badge}</span></button>
+      <div class="cl-body" style="display:none;padding:0 15px 12px;overflow-x:auto">
+        <table><thead><tr><th class="l">Keyword</th><th>Was</th><th>Now</th><th>Δ</th><th>Vol</th><th class="l">Ranking URL</th></tr></thead>
+        <tbody>${rows}</tbody></table></div></div>`;
+  }).join('');
+  [...document.querySelectorAll('#clusters button')].forEach(b => b.onclick = () => {
+    const body = b.nextElementSibling;
+    const open = body.style.display !== 'none';
+    body.style.display = open ? 'none' : 'block';
+    b.querySelector('.cl-caret').textContent = open ? '▸' : '▾';
+  });
+})();
 
 $('cannib').innerHTML = REPORT.cannib.map(r => `<tr>
   <td class="l"><b>${esc(r.kw)}</b></td><td>$${r.cpc.toFixed(2)}</td>
