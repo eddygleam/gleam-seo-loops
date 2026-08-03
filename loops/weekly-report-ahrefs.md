@@ -264,17 +264,37 @@ AND no existing Directus page. Every item carries its `where`.
 
 Write this run's pulls to Google Drive folder `Gleam SEO snapshots` as
 `YYYY-MM-DD-<kind>.json` for kinds `gsc_keywords`, `gsc_pages`, `ctr_curve`, `movers`, and
-`brand_paid` (the six figures pulled from Google Ads, for history and week-on-week paid deltas).
+`competitors` (organic-competitor traffic for the SoV/grid, for week-on-week deltas).
 Next week's diff depends on this; skip it and every week looks like week one.
 
 ## Step 7 — deliver
 
 The report people open is the **rendered `report.html`** (from `gleam_seo.render_html` — the
 exact twelve-section template with the diverging chart), delivered as a **native HTML file in a
-direct message to Eddy** (`D0BMAL0MZMW`). When clicked, Slack opens the attachment and the
-browser renders the full styled page. **The HTML attachment is the report** — not a canvas, not
-a link. **Never publish it to a public URL** (no GitHub Pages, no public link); a native Slack
+direct message to Eddy** (`D0BMAL0MZMW`). **The HTML attachment is the report** — not a canvas,
+not a link. **Never publish it to a public URL** (no GitHub Pages, no public link); a native Slack
 file stays inside the workspace.
+
+### MANDATORY: pre-render to static HTML before uploading
+
+**Slack's file preview does NOT run JavaScript.** The template paints every section from the
+`REPORT` object with client-side JS, and it paints §05–§11 *late* in that script — so in Slack the
+early sections show and everything from section 5 onward comes up blank. This produced a
+"sections 5+ are empty" report. **Never upload the JS-driven HTML.** Bake the rendered DOM into
+static HTML first:
+
+1. Open the rendered `report.html` in the pre-installed headless Chromium (Playwright,
+   `executablePath: /opt/pw-browsers/chromium`), let the render script run, then read
+   `await page.content()` — the DOM now has every table/section baked in.
+2. Strip the render `<script>` block (the one containing the `REPORT` data + `getElementById`
+   render code) so nothing depends on JS re-running, and write the result as `report_static.html`.
+3. **Verify with JS disabled**: reload `report_static.html` in a context with
+   `javaScriptEnabled: false` and assert every `<section>` has non-trivial `innerText`
+   (each > ~40 chars). If any section is empty, stop — do not deliver.
+4. Upload `report_static.html` (not the JS version).
+
+This is bulletproof: the static file renders identically in Slack preview, mobile, and any viewer,
+JS on or off.
 
 The loop uploads the file itself using Slack's **external upload flow** (the modern replacement
 for the deprecated `files.upload`). This was verified working end to end; do NOT use the dead
@@ -290,11 +310,11 @@ ends below, all of which were tested and fail:
 
 1. **Get an upload URL** (Zapier `_zap_raw_request`, `SlackCLIAPI`, which injects the Slack
    token): `POST https://slack.com/api/files.getUploadURLExternal` with querystring
-   `filename=GleamSEO-<ISO week>.html` and `length=<exact byte size of report.html>` (use
-   `wc -c`). It returns `upload_url` and `file_id`.
+   `filename=GleamSEO-<ISO week>.html` and `length=<exact byte size of report_static.html>` (use
+   `wc -c` on the **static** file). It returns `upload_url` and `file_id`.
 
-2. **Push the bytes** with Bash `curl` — the file is read straight from disk, so size is a
-   non-issue: `curl -sS -X POST --data-binary @report.html "<upload_url>"`. (`_zap_raw_request`
+2. **Push the bytes** with Bash `curl` — upload the static file:
+   `curl -sS -X POST --data-binary @report_static.html "<upload_url>"`. (`_zap_raw_request`
    is locked to the `slack.com` domain and CANNOT post to the `files.slack.com` upload URL —
    that is why the byte push must go through `curl`, not Zapier.)
 
