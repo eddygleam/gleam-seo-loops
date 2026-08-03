@@ -67,10 +67,14 @@ acceptable. Per section:
   (`gsc-pages` / `site-explorer-top-pages`, using `traffic_value`). Label it *organic traffic
   value*, an Ahrefs estimate — never call it booked revenue, and never imply GA4 is connected.
   Column headers are Value/wk, Organic visits, Value/visit.
-- **06 Referring domains** (NOT "referral revenue") — the Ahrefs backlink profile:
-  `site-explorer-referring-domains` (domain, DR, dofollow/links_to_target, filtered `is_spam=false`)
-  plus `site-explorer-anchors` for anchor text. There is no GA4 connector, so session/revenue
-  columns read "—"; the domains, DR, links and anchors are real. Do not frame this as revenue.
+- **06 Referring domains** (NOT "referral revenue") — the live Ahrefs backlink profile; **no GA4,
+  no revenue/session column, and never a "needs GA4" card** (Ahrefs already carries everything this
+  section shows). KPIs from `site-explorer-backlinks-stats` (`live_refdomains`, `live` backlinks).
+  Table from `site-explorer-referring-domains`, select
+  `domain, domain_rating, traffic_domain, positions_source_domain, links_to_target, dofollow_links, first_seen`,
+  filtered `is_spam=false` and `dofollow_links>0`, ordered `domain_rating:desc`. Every column is an
+  Ahrefs metric: the referrer's Domain Rating, its own estimated organic traffic and keyword
+  footprint, how many links it points at Gleam, and when the link was first seen.
 - **07 Brand defence (ORGANIC)** — no paid table, ever. Brand SERP: `serp-overview` for
   "gleam alternatives" and "gleam alternative" (organic rows → domain, position, DR, page type;
   gleam.io's own row flagged). KPIs are organic: brand queries owned at #1, the brand-head CTR gap
@@ -87,11 +91,17 @@ acceptable. Per section:
   where a competitor outranks gleam.io — e.g. contest software, contest platform).
 - **09 AI search** — check `management-brand-radar-reports` first. If a Brand Radar report exists,
   read `brand-radar-*` for AI-answer mentions / citation share / SoV. If none exists (currently 0),
-  the section renders "Not configured" **and states what to enable**: (a) a Brand Radar report for
-  the `gleam` entity with the commercial prompts, or (b) the commercial keyword set added to a Rank
-  Tracker project so each keyword reports the `ai_overview` / `ai_overview_found` SERP feature.
-  Until then the KPIs are the AEO-readiness proxy (branded-entity + informational #1s), labelled
-  as such. Never imply AI Overview presence is being measured when it is not.
+  the section renders "Not configured" **and prints the build recipe** so it can be turned on. The
+  Brand Radar report is created **once in the Ahrefs UI** (the `management-brand-radar-*` endpoints
+  only read it back — there is no create API): Ahrefs → Brand Radar → New report → entity **Gleam**
+  (add `gleam.io`, "gleam", "gleam.io") → commercial **prompts** (giveaway tool, contest platform,
+  sweepstakes software, gleam alternatives, giveaway app, social media contest platform, best
+  giveaway tools, how to run a giveaway) → AI sources AI Overviews + ChatGPT/Perplexity/Gemini →
+  region US → save. First data ~24h; thereafter the loop reads it automatically. Alternatively (b)
+  add the commercial keyword set to a Rank Tracker project so each keyword reports the
+  `ai_overview` / `ai_overview_found` SERP feature. Until one is set up the KPIs are the
+  AEO-readiness proxy (branded-entity + informational #1s), labelled as such. Never imply AI
+  Overview presence is being measured when it is not.
 
 Populate every section from a real pull, label the source, and never leave a header with no rows.
 

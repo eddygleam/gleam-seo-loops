@@ -173,20 +173,19 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
     <th class="l">Primary query</th><th>Pos</th><th>Clicks</th><th class="l">Read</th>
   </tr></thead><tbody id="revtable"></tbody></table></div>
   <div class="callout" id="revnote"></div>
-  <p class="src">GA4 does not expose a keyword for organic sessions. The join is landing page → that page's highest-click query in Search Console for the same period, so "primary query" is the query most likely earning the revenue, not a measured attribution. Treat rev/session as sound and query attribution as indicative.</p>
+  <p class="src">Value is Ahrefs organic <b>traffic value</b> per landing page — the estimated cost to buy that page's organic clicks via ads — joined to the page's highest-click Search Console query for the same period. It is an organic-value estimate, not booked revenue, and needs no GA4.</p>
 </section>
 
 <!-- 06 REFERRALS -->
 <section>
   <div class="snum">06 · REFERRING DOMAINS</div>
-  <h2>Which sites link to Gleam, and what anchor text they use</h2>
+  <h2>Which sites link to Gleam — the live Ahrefs backlink profile</h2>
   <div class="kpis" id="refkpis"></div>
   <div style="overflow-x:auto"><table><thead><tr>
-    <th class="l">Referring domain</th><th class="l">Dominant anchor</th><th class="l">Anchor type</th>
-    <th>Sessions</th><th>Revenue</th><th>Rev/session</th><th>DR</th><th>Links</th><th class="l">Linking page</th>
+    <th class="l">Referring domain</th><th>DR</th><th>Domain traffic/mo</th><th>Keywords ranked</th><th>Links to Gleam</th><th>Dofollow</th><th class="l">First seen</th>
   </tr></thead><tbody id="reftable"></tbody></table></div>
   <div class="callout" id="refnote"></div>
-  <p class="src">Joined on referring domain: GA4 sessionSourceMedium gives sessions and revenue, Ahrefs site-explorer-anchors gives the anchor text. Where a domain links more than once with different anchors, the dominant anchor by link count is shown — revenue cannot be split to individual links, so read this at domain level.</p>
+  <p class="src">Live Ahrefs backlink profile (site-explorer-referring-domains + backlinks-stats), spam-filtered, ordered by Domain Rating. Every column is an Ahrefs metric — no GA4, no session or revenue data.</p>
 </section>
 
 <!-- 07 BRAND -->
@@ -242,9 +241,16 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
     <b>Why this section can read "Not configured", and what turns it on.</b> AI Overview / LLM-answer tracking is not a
     Search Console or Site Explorer metric, so it cannot be back-filled from the pulls above. Two Ahrefs features enable it:
     <ol style="margin:8px 0 0 18px;padding:0">
-      <li><b>Brand Radar report</b> (recommended) — a report for the <span class="mono">gleam</span> entity with the
-      commercial prompts; it measures AI-answer mentions, citation share and share of voice. Check
-      management-brand-radar-reports — if it returns empty, none exists yet.</li>
+      <li><b>Brand Radar report</b> (recommended) — measures AI-answer mentions, citation share and share of voice across
+      AI Overviews and the LLMs. Check management-brand-radar-reports; if it returns empty, none exists yet and it must be
+      built once in the Ahrefs UI. <b>How to build it:</b>
+      <ol style="margin:6px 0 0 18px;padding:0">
+        <li>Ahrefs → <b>Brand Radar</b> → <b>New report</b> (it is created in the UI, not the API — the management-brand-radar-* endpoints only read it back).</li>
+        <li>Brand / entity: <b>Gleam</b> — add <span class="mono">gleam.io</span> and the variants "gleam", "gleam.io".</li>
+        <li>Commercial <b>prompts</b>: <span class="mono">giveaway tool · contest platform · sweepstakes software · gleam alternatives · giveaway app · social media contest platform · best giveaway tools · how to run a giveaway</span>.</li>
+        <li>AI sources: Google <b>AI Overviews</b> + <b>ChatGPT, Perplexity, Gemini</b>. Region <b>United States</b>.</li>
+        <li>Save and run — first data in ~24h, then the loop reads it every week via the brand-radar-* tools.</li>
+      </ol></li>
       <li><b>Rank Tracker AI-Overview flag</b> — add the commercial keyword set to a Rank Tracker project; each keyword
       then reports the <span class="mono">ai_overview</span> / <span class="mono">ai_overview_found</span> SERP feature
       and whether gleam.io is cited.</li>
@@ -914,19 +920,14 @@ $('revnote').innerHTML = REPORT.rev.note;
 const atype = t => t==='commercial' ? '<span class="b g">commercial</span>'
   : t==='brand' ? '<span class="b n">brand</span>' : '<span class="b a">naked URL</span>';
 $('refkpis').innerHTML = kpiCards(REPORT.ref.kpis);
-$('reftable').innerHTML = REPORT.ref.rows.map(r => {
-  const hasRev = typeof r.rev==='number' && typeof r.sess==='number' && r.sess>0;
-  const rps = hasRev ? r.rev/r.sess : null;
-  return `<tr>
+$('reftable').innerHTML = REPORT.ref.rows.map(r => `<tr>
     <td class="l mono">${esc(r.dom)}</td>
-    <td class="l"><b>${esc(r.anchor)}</b></td>
-    <td class="l">${atype(r.type)}</td>
-    <td>${typeof r.sess==='number'?r.sess.toLocaleString('en-AU'):'—'}</td>
-    <td><b>${typeof r.rev==='number'?'A$'+r.rev.toLocaleString('en-AU'):'—'}</b></td>
-    <td class="${rps!=null&&rps>=2?'up':rps!=null&&rps<1?'dn':''}">${rps!=null?'A$'+rps.toFixed(2):'—'}</td>
-    <td>${r.dr}</td><td>${r.links}</td>
-    <td class="l mono">${esc(r.page)}</td></tr>`;
-}).join('');
+    <td class="up">${r.dr!=null?r.dr:'—'}</td>
+    <td>${r.traf!=null?r.traf.toLocaleString('en-AU'):'—'}</td>
+    <td>${r.kw!=null?r.kw.toLocaleString('en-AU'):'—'}</td>
+    <td><b>${r.links!=null?r.links.toLocaleString('en-AU'):'—'}</b></td>
+    <td>${r.df!=null?r.df.toLocaleString('en-AU'):'—'}</td>
+    <td class="l">${r.seen?esc(r.seen):'—'}</td></tr>`).join('');
 $('refnote').innerHTML = REPORT.ref.note;
 
 $('infokpis').innerHTML = REPORT.info.kpis.map(k => `
