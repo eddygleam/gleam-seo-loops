@@ -26,13 +26,18 @@ estimate it, do not carry a previous week's figure forward as current, do not re
 number that seems plausible. If a pull fails, name the failure in the method section and leave
 that section empty. An empty section is information; a confident guess is a liability.
 
-Two traps that have already produced wrong output in this project:
+Three traps that have already produced wrong output in this project:
 
 - **Never claim what a competitor's ad says** unless you are quoting ad text returned by an
   API. Never allege trademark misuse on inference. A previous draft accused two companies of
   trademark violation with no evidence; the data contradicted it.
 - **Never assert Gleam is absent from a SERP without checking.** Gleam ranks #8 for
   "gleam alternative" via /blog/comparisons/. Check before recommending a new page.
+- **Never invent Brand Radar / AI share-of-voice numbers.** A W33 draft shipped fabricated AI
+  SoV figures (gleam 32%, SweepWidget 68%, …) that no tool returned — the `brand-radar-*` reads
+  fail with `Missing addon` on this plan. If those calls error or return nothing, the section says
+  so and falls back to the ranking-based AEO proxy. An addon-gated or errored endpoint yields a
+  stated gap, never a number.
 
 ## Rule 1 — every recommendation carries a location
 
@@ -88,20 +93,34 @@ acceptable. Per section:
   self row (typically the leader, ~55%). Note that giveaway-listing aggregators (app-sorteos,
   thefreebieguy) have larger raw traffic but a directory audience — keep them out of the platform
   SoV and in the competitor grid. **Displacement** from the competitor grid (any tracked keyword
-  where a competitor outranks gleam.io — e.g. contest software, contest platform).
-- **09 AI search** — check `management-brand-radar-reports` first. If a Brand Radar report exists,
-  read `brand-radar-*` for AI-answer mentions / citation share / SoV. If none exists (currently 0),
-  the section renders "Not configured" **and prints the build recipe** so it can be turned on. The
-  Brand Radar report is created **once in the Ahrefs UI** (the `management-brand-radar-*` endpoints
-  only read it back — there is no create API): Ahrefs → Brand Radar → New report → entity **Gleam**
-  (add `gleam.io`, "gleam", "gleam.io") → commercial **prompts** (giveaway tool, contest platform,
-  sweepstakes software, gleam alternatives, giveaway app, social media contest platform, best
-  giveaway tools, how to run a giveaway) → AI sources AI Overviews + ChatGPT/Perplexity/Gemini →
-  region US → save. First data ~24h; thereafter the loop reads it automatically. Alternatively (b)
-  add the commercial keyword set to a Rank Tracker project so each keyword reports the
-  `ai_overview` / `ai_overview_found` SERP feature. Until one is set up the KPIs are the
-  AEO-readiness proxy (branded-entity + informational #1s), labelled as such. Never imply AI
-  Overview presence is being measured when it is not.
+  where a competitor outranks gleam.io — e.g. contest software, contest platform). If there is no
+  displacement to show (or it is the baseline run with no prior competitor snapshot), the
+  displacement table gets a one-row note saying so — never leave it an empty `<tbody>` (Rule 3).
+- **11 Informational** — the existing-content check needs Directus. If Directus is not connected
+  this run, render the section with a callout stating that plainly (as this run did) — never guess
+  a recommendation. Still show any informational query that cleared the movement/materiality gate
+  from GSC; if none did and Directus is down, the callout is the whole section.
+- **09 AI search** — check `management-brand-radar-reports` first (free). Three states, and you MUST
+  land in exactly one — never invent SoV, mention or citation numbers (Rule 0; this section has
+  already shipped fabricated figures once — do not repeat it):
+  1. **A report exists AND `brand-radar-*` returns data** → render real SoV / mentions / citations
+     vs the competitor set. The "Implement at" column is always a **gleam.io URL or a content
+     action** (e.g. "/pricing — add FAQ schema"), NEVER the Ahrefs report ID or a data-source URL —
+     that column says *where on the site to make the change*, not where the data came from.
+  2. **A report exists BUT `brand-radar-sov/mentions/citations` returns `Missing addon`** (the API
+     read is a separately-billed Brand Radar addon, distinct from creating the report — this is the
+     current state on the plan) → **do not fabricate any number.** Render: "report live in the
+     Ahrefs UI, API read needs the Brand Radar addon", point the reader to the Ahrefs UI, and fall
+     back to the AEO-readiness proxy rows (below). Say plainly that no AI SoV was pulled.
+  3. **No report exists** → "Not configured" + the build recipe: Ahrefs → Brand Radar → New report →
+     entity **Gleam** → commercial prompts (giveaway tool, contest platform, sweepstakes software,
+     gleam alternatives, giveaway app, social media contest platform, best giveaway tools, how to
+     run a giveaway) → AI sources AI Overviews + ChatGPT/Perplexity/Gemini → region US → save.
+  In states 2 and 3 the KPIs and table rows are the **AEO-readiness proxy** — Gleam's branded-entity
+  and informational #1s ("is gleam free", "what is gleam", "is gleam.io legit") with a real on-site
+  action per row and a gleam.io URL in "Implement at" — clearly labelled as a proxy. A Brand Radar
+  SoV number appears in this report ONLY when state 1 actually returned it. Never put a Brand Radar
+  figure in the §01 scorecard or the method log unless it was genuinely pulled.
 
 Populate every section from a real pull, label the source, and never leave a header with no rows.
 
