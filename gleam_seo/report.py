@@ -396,12 +396,16 @@ def build_report(payload: dict) -> dict:
         "diverge": diverge,
         "gained": gained,
         "lost": lost,
+        "clusters": narrative.get("clusters", []),
         "cannib": cannib,
         "ctrgap": ctrgap,
 
         "sov": narrative.get("sov", []),
         "displace": narrative.get("displace", []),
         "newpages": narrative.get("newpages", []),
+        "compvis": narrative.get("compvis", []),
+        "grid": narrative.get("grid", {"domains": [], "rows": []}),
+        "sitehealth": narrative.get("sitehealth", NOT_PULLED),
         "ai": _sec("ai", {"kpis": [], "rows": []}),
         "queue": queue,
 

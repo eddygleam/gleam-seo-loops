@@ -57,9 +57,9 @@ class TestReportShape(unittest.TestCase):
 
     def test_all_top_level_keys_present(self):
         for k in ["week", "period", "generated", "findings", "priority1", "units",
-                  "status", "kpis", "kpisrc", "diverge", "gained", "lost", "cannib",
-                  "ctrgap", "sov", "displace", "newpages", "ai", "queue", "brand",
-                  "rev", "ref", "info", "method"]:
+                  "status", "kpis", "kpisrc", "diverge", "gained", "lost", "clusters",
+                  "cannib", "ctrgap", "sov", "displace", "newpages", "compvis", "grid",
+                  "sitehealth", "ai", "queue", "brand", "rev", "ref", "info", "method"]:
             self.assertIn(k, self.r)
 
     def test_nested_sections_have_required_keys(self):
@@ -118,6 +118,14 @@ class TestReportShape(unittest.TestCase):
     def test_units_passed_through(self):
         self.assertEqual(self.r["units"], {"ahrefs": 1840, "semrush": 0})
 
+    def test_clusters_compvis_grid_default_empty(self):
+        self.assertEqual(self.r["clusters"], [])
+        self.assertEqual(self.r["compvis"], [])
+        self.assertEqual(self.r["grid"], {"domains": [], "rows": []})
+
+    def test_sitehealth_defaults_not_pulled(self):
+        self.assertEqual(self.r["sitehealth"], NOT_PULLED)
+
 
 class TestNarrativeMerge(unittest.TestCase):
     def test_narrative_overrides_prose_sections(self):
@@ -126,12 +134,18 @@ class TestNarrativeMerge(unittest.TestCase):
             "kpis": [{"k": "Commercial visibility", "v": "34.2%", "d": "+0.8 WoW", "dir": "up", "note": "x"}],
             "rev": {"kpis": [], "rows": [{"pg": "/pricing", "rev": 1920, "sess": 890, "q": "gleam pricing", "pos": 11, "clicks": 64, "read": "fix"}], "note": "GA4 pulled"},
             "status": {"level": "action", "line": "custom line", "quiet_line": "q"},
+            "clusters": [{"name": "gleam (brand)", "up": 0, "down": 0, "flat": 1, "net": 0, "kws": []}],
+            "compvis": [{"dom": "gleam.io", "kw": 888, "top3": 383, "traf": 24829, "val": 34655, "self": True}],
+            "grid": {"domains": ["gleam.io"], "rows": [{"kw": "giveaway", "vol": 17000, "pos": {"gleam.io": 1}}]},
         }
         r = build_report(payload)
         self.assertEqual(r["kpis"][0]["k"], "Commercial visibility")
         self.assertEqual(r["rev"]["note"], "GA4 pulled")
         self.assertEqual(r["rev"]["rows"][0]["pg"], "/pricing")
         self.assertEqual(r["status"]["line"], "custom line")
+        self.assertEqual(r["clusters"][0]["name"], "gleam (brand)")
+        self.assertEqual(r["compvis"][0]["dom"], "gleam.io")
+        self.assertEqual(r["grid"]["domains"], ["gleam.io"])
 
 
 class TestManualGuard(unittest.TestCase):

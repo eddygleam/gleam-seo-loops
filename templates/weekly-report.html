@@ -154,7 +154,7 @@ footer{padding:26px 0;color:var(--ink-3);font-size:12px}
     </ol>
   </div>
 
-  <p><span class="b n">Site health 91</span> <span class="dn">−1 WoW</span> — below the alert threshold of 88 triggers a technical item; it has not.</p>
+  <p id="sitehealth"></p>
 
   <h3>CTR below position benchmark — metadata problem</h3>
   <div style="overflow-x:auto"><table><thead><tr>
@@ -817,6 +817,7 @@ $('lost').innerHTML = REPORT.lost.map(r => `<tr>
   });
 })();
 
+$('sitehealth').innerHTML = REPORT.sitehealth;
 $('cannib').innerHTML = REPORT.cannib.map(r => `<tr>
   <td class="l"><b>${esc(r.kw)}</b></td><td>$${r.cpc.toFixed(2)}</td>
   <td class="l mono">${esc(r.a)}</td><td class="l mono">${esc(r.b)}</td>
