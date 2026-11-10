@@ -39,6 +39,29 @@ Three traps that have already produced wrong output in this project:
   so and falls back to the ranking-based AEO proxy. An addon-gated or errored endpoint yields a
   stated gap, never a number.
 
+## Rule 0b — if Ahrefs is not available, use Semrush
+
+Applies to the metered Ahrefs reads (volume and CPC, site-explorer, serp-overview, backlinks,
+competitors). Search Console data stays on the free Ahrefs `gsc-*` tools; if those fail too, say so and
+leave the movers sections empty.
+
+1. **Retry first.** An `API units limit reached` error can clear (it did in the W45 run). Call
+   `subscription-info-limits-and-usage`; if `units_limit_workspace` minus `units_usage_workspace` is above
+   zero, repeat the failed pulls once before falling back.
+2. **If it still fails, use the Semrush connector** for the same figure, mapped like this:
+   volume and CPC, `semrush_keyword_organic_results`; domain organic keywords, traffic and traffic cost,
+   `semrush_domain_organic_keywords`; organic competitors, the Semrush organic competitors report;
+   backlinks and referring domains, the Semrush backlinks tools. Use whatever `semrush_*` or
+   `mcp__Semrush__*` tools the session exposes. `semrush_keyword_ads_history` costs 100 units per line and
+   stays out of this organic report.
+3. **Label the source on every figure and table that came from Semrush** ("Semrush, US database"). Never
+   mix Semrush and Ahrefs numbers inside one column or one share-of-voice calculation. If a section can only
+   be half filled from Semrush, fill the half and say which half.
+4. **Positions always come from Search Console.** Semrush positions have contradicted Search Console before.
+5. **If the Semrush tools are not in the session either, write "not pulled this run"** for that section and
+   name both failures in section 12. Do not estimate.
+6. Record in section 12 which source served each section and how many Semrush units were spent.
+
 ## Rule 1 — every recommendation carries a location
 
 Each action item has two parts: what to do, and **where** — an exact URL, a proposed new
